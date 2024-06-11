@@ -1,0 +1,14 @@
+spring:
+  rabbitmq:
+    host: 39.107.57.188
+    port: 61613
+    username: guest
+    password: guest
+  config:
+    import:
+      - classpath:mbp-local.yaml
+      - classpath:security-dev.yaml
+      - classpath:knife4j-dev.yaml
+logging:
+  level:
+    com.baomidou.mybatisplus.mapper: DEBUG

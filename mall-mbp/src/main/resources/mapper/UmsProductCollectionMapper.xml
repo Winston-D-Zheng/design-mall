@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.UmsProductCollectionMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.UmsProductCollection">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="memberId" column="member_id" jdbcType="BIGINT"/>
+        <result property="productId" column="product_id" jdbcType="BIGINT"/>
+        <result property="shopId" column="product_id" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--    <sql id="Base_Column_List">-->
+    <!--        id,member_id,product_id,-->
+    <!--        create_time,status,product_name,-->
+    <!--        product_pic,product_price,product_origin_price-->
+    <!--    </sql>-->
+</mapper>

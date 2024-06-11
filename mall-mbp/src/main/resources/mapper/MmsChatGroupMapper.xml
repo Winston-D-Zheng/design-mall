@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.MmsChatGroupMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.MmsChatGroup">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,shop_id,create_time,
+        avatar,name
+    </sql>
+    <insert id="saveGroupUser">
+        insert into mms_chat_group_user (group_id, user_id, user_type)
+        VALUES (#{groupId},#{userId},#{EUserType})
+    </insert>
+    <select id="queryByShopAndUser" resultType="java.lang.Long">
+        select g.id
+        from mms_chat_group as g
+                 join mms_chat_group_user as gu
+                      on g.id = gu.group_id
+                          and gu.user_id = #{userId}
+                          and gu.user_type = #{userType}
+        where g.shop_id = #{shopId}
+
+    </select>
+</mapper>

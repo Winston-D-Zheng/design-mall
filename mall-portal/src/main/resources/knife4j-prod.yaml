@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: classpath:knife4j.yaml
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: false
+  setting:
+    language: zh_cn

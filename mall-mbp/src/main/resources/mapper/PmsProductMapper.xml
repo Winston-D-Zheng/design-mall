@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.PmsProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.PmsProduct">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
+            <result property="pic" column="pic" jdbcType="VARCHAR"/>
+            <result property="albumPics" column="album_pics" jdbcType="VARCHAR"/>
+            <result property="deleteStatus" column="delete_status" jdbcType="INTEGER"/>
+            <result property="publishStatus" column="publish_status" jdbcType="INTEGER"/>
+            <result property="sort" column="sort" jdbcType="INTEGER"/>
+            <result property="sale" column="sale" jdbcType="INTEGER"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="originalPrice" column="original_price" jdbcType="DECIMAL"/>
+            <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="lowStock" column="low_stock" jdbcType="INTEGER"/>
+            <result property="unit" column="unit" jdbcType="VARCHAR"/>
+            <result property="keywords" column="keywords" jdbcType="VARCHAR"/>
+            <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+<!--    <sql id="Base_Column_List">-->
+<!--        id,name,description,-->
+<!--        shop_id,pic,album_pics,-->
+<!--        delete_status,publish_status,sort,-->
+<!--        sale,price,original_price,-->
+<!--        stock,low_stock,unit,-->
+<!--        keywords-->
+<!--    </sql>-->
+    <select id="queryByKeyWords" resultType="com.qdd.designmall.mbp.model.PmsProduct">
+        select *
+        from pms_product
+        where name like concat('%', #{keywords}, '%')
+           or description like concat('%', #{keywords}, '%')
+           or keywords like concat('%', #{keywords}, '%')
+    </select>
+</mapper>

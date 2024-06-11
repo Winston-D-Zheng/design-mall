@@ -1,0 +1,9 @@
+spring:
+  config:
+    import: classpath:mbp.yaml
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://39.107.57.188:3306/qdd_design_mall?useSSL=false&useUnicode=true&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: root
+    password: root1121
+

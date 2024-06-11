@@ -1,0 +1,54 @@
+services:
+  # Spring Boot 应用
+  webapp-admin:
+    build: mall-admin
+    ports:
+      - "18080:18080"
+#    depends_on:
+#      - mysql
+#      - rabbitmq
+
+  webapp-portal:
+    build: mall-portal
+    ports:
+      - "28080:28080"
+#    depends_on:
+#      - mysql
+#      - rabbitmq
+
+#  elasticsearch:
+#    image: elasticsearch:7.17.9
+#    container_name: elasticsearch
+#    environment:
+#      - discovery.type=single-node
+#      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+#    mem_limit: 1g
+
+
+  # MySQL 服务
+#  mysql:
+#    image: mysql:latest
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root1121
+#      MYSQL_DATABASE: qdd_design_mall
+#    ports:
+#      - "3306:3306"
+
+  # Redis 服务
+  #  redis:
+  #    image: redis:latest
+  #    ports:
+  #      - "6379:6379"
+
+  # RabbitMQ 服务
+#  rabbitmq:
+#    image: rabbitmq:latest
+#    volumes:
+#      - ./init:/tmp
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#      - "61613:61613"

@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: mall-portal
+  profiles:
+    active: local
+  config:
+    import: classpath:qiniuyun.yaml
+server:
+  port: 28080
+
