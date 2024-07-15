@@ -1,11 +1,12 @@
 package com.qdd.designmall.security.config;
 
+import com.qdd.designmall.common.enums.EUserType;
 import com.qdd.designmall.mbp.model.UmsMember;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+
 
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 @ConditionalOnBean(name = "mallPortalApplication")
 @Data
 @AllArgsConstructor
-public class MemberUserDetails implements UserDetails {
+public class MemberUserDetails implements ZUserDetails {
     private UmsMember user;
 
 
@@ -50,5 +51,16 @@ public class MemberUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    @Override
+    public Long getUserId() {
+        return user.getId();
+    }
+
+    @Override
+    public EUserType getUserType() {
+        return EUserType.MEMBER;
     }
 }

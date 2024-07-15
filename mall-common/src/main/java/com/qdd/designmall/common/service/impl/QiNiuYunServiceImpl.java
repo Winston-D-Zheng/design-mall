@@ -1,6 +1,6 @@
 package com.qdd.designmall.common.service.impl;
 
-import com.qdd.designmall.common.config.property.QiniuyunProperties;
+import com.qdd.designmall.common.config.QiniuyunProperties;
 import com.qdd.designmall.common.service.QiNiuYunService;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;

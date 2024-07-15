@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: classpath:mbp.yaml
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://116.205.104.102:3306/qdd_design_mall?useSSL=false&useUnicode=true&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: remote_user
+    password: Huawei123!

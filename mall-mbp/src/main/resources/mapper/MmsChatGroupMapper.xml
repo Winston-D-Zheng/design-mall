@@ -18,7 +18,7 @@
     </sql>
     <insert id="saveGroupUser">
         insert into mms_chat_group_user (group_id, user_id, user_type)
-        VALUES (#{groupId},#{userId},#{EUserType})
+        VALUES (#{groupId},#{userId},#{userType})
     </insert>
     <select id="queryByShopAndUser" resultType="java.lang.Long">
         select g.id

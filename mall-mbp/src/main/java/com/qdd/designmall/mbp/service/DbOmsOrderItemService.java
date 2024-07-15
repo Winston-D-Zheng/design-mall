@@ -10,4 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface DbOmsOrderItemService extends IService<DbOmsOrderItem> {
 
+    DbOmsOrderItem notNullOne(Long orderItemId);
+
+    Long notNullOrderId(Long orderItemId);
 }

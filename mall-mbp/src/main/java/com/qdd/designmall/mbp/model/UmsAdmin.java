@@ -34,4 +34,9 @@ public class UmsAdmin implements Serializable {
     private LocalDate loginTime;
 
     private Integer status;
+
+    /**
+     * MERCHANT：商家, WRITER：写手, CUSTOMER_SERVICE：客服
+     */
+    private String roles;
 }

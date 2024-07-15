@@ -1,25 +1,34 @@
 package com.qdd.designmall.malloms.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.qdd.designmall.common.enums.EUserType;
 import com.qdd.designmall.malloms.po.OrderPageParam;
 import com.qdd.designmall.malloms.service.OrderService;
 import com.qdd.designmall.malloms.util.OrderSnGenUtil;
+import com.qdd.designmall.malloms.vo.OrderPageVo;
 import com.qdd.designmall.mbp.model.DbOmsOrder;
+import com.qdd.designmall.mbp.model.DbOmsOrderItem;
 import com.qdd.designmall.mbp.model.PmsProduct;
+import com.qdd.designmall.mbp.service.DbOmsOrderItemService;
 import com.qdd.designmall.mbp.service.DbOmsOrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final DbOmsOrderService dbOmsOrderService;
+    private final DbOmsOrderItemService dbOmsOrderItemService;
 
     @Override
-    public void create(PmsProduct product, Long memberId) {
+    public DbOmsOrder orderAdd(PmsProduct product, Long memberId) {
         DbOmsOrder dbOmsOrder = new DbOmsOrder();
         dbOmsOrder.setOrderSn(OrderSnGenUtil.generate());         // 生成订单号
         dbOmsOrder.setProductId(product.getId());                 // 商品id
@@ -39,17 +48,95 @@ public class OrderServiceImpl implements OrderService {
 
         // 插入订单表
         dbOmsOrderService.save(dbOmsOrder);
+
+        return dbOmsOrder;
+    }
+
+
+    @Override
+    public void orderItemAdd(Long orderId, Integer stage, BigDecimal price) {
+        DbOmsOrderItem entity = new DbOmsOrderItem();
+        entity.setOrderId(orderId);
+        entity.setStage(stage);
+        entity.setPrice(price);
+        entity.setCreateTime(LocalDateTime.now());
+        dbOmsOrderItemService.save(entity);
+
+        // 更新订单stage和price
+        DbOmsOrder order = dbOmsOrderService.notNullOne(orderId);
+        order.setCurrentStage(stage);
+        dbOmsOrderService.updateById(order);
     }
 
     @Override
-    public IPage<DbOmsOrder> pageOrder(OrderPageParam param) {
+    public void orderItemChangePrice(Long orderItemId, BigDecimal price) {
+        DbOmsOrderItem orderItem = dbOmsOrderItemService.notNullOne(orderItemId);
+        orderItem.setPrice(price);
+        dbOmsOrderItemService.updateById(orderItem);
+    }
 
-        return dbOmsOrderService.lambdaQuery()
+    @Override
+    public Optional<Long> orderItemPay(Long orderItemId) {
+        Optional<Long> productMinus = Optional.empty();
+        //TODO 金融方面的验证
+
+        DbOmsOrderItem orderItem = dbOmsOrderItemService.notNullOne(orderItemId);
+        DbOmsOrder order = dbOmsOrderService.notNullOne(orderItem.getOrderId());
+
+        // 最后阶段子订单完成，订单整体设为完成
+        if (Objects.equals(orderItem.getStage(), order.getEndStage())) {
+            order.setStatus(2);
+            productMinus = Optional.of(order.getProductId());
+        }
+
+        // 订单价格=订单项价格+订单项价格
+        order.setRealPrice(order.getRealPrice().add(orderItem.getPrice()));
+
+        order.setStatus(1);
+
+        dbOmsOrderService.updateById(order);
+        dbOmsOrderItemService.updateById(orderItem);
+
+        return productMinus;
+    }
+
+    @Override
+    public IPage<OrderPageVo> pageOrder(OrderPageParam param, EUserType userType) {
+
+        switch (userType) {
+            case ADMIN -> {
+                if (param.getShopId() == null) {
+                    throw new RuntimeException("店铺id不能为空");
+                }
+            }
+            case MEMBER -> {
+                if (param.getMemberId() == null) {
+                    throw new RuntimeException("用户id不能为空");
+                }
+                param.setDeleteStatus(0);
+            }
+        }
+
+        IPage<DbOmsOrder> ords = dbOmsOrderService.lambdaQuery()
                 .eq(param.getShopId() != null, DbOmsOrder::getShopId, param.getShopId())                      // 店铺id
                 .eq(param.getMemberId() != null, DbOmsOrder::getMemberId, param.getMemberId())                // 用户
                 .eq(param.getStatus() != null, DbOmsOrder::getStatus, param.getStatus())                      // 状态
                 .eq(param.getDeleteStatus() != null, DbOmsOrder::getDeleteStatus, param.getDeleteStatus())    // 删除状态
-                .page(param.getPageParam().iPage());
+                .page(param.getPage().iPage());
+
+
+        return ords.convert(e -> {
+            OrderPageVo r = new OrderPageVo();
+
+            List<DbOmsOrderItem> orderItems = dbOmsOrderItemService.lambdaQuery()
+                    .eq(DbOmsOrderItem::getOrderId, e.getId())
+                    .list();
+
+            BeanUtils.copyProperties(e, r);
+            r.setOrderItems(orderItems);
+
+            return r;
+        });
     }
 
     @Override
@@ -59,7 +146,6 @@ public class OrderServiceImpl implements OrderService {
         if (one.getDeleteStatus() == 1) {
             throw new RuntimeException("订单已被删除");
         }
-
         if (one.getStatus() != 0) {
             throw new RuntimeException("订单非待支付状态");
         }
@@ -70,20 +156,4 @@ public class OrderServiceImpl implements OrderService {
 
         return one;
     }
-
-
-    /**
-     * 生成18位订单编号:8位日期+2位平台号码+2位支付方式+6位以上自增id
-     *
-     * @param createTime 订单创建时间
-     * @param platformId 2位平台号码
-     * @param payType    2位支付方式
-     * @return 订单sn
-     */
-    private String generateOrderSn(LocalDateTime createTime, Integer platformId, Integer payType) {
-        String format = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(createTime);
-        return format + platformId + payType;
-    }
-
-
 }

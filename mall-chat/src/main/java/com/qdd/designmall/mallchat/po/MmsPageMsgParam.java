@@ -1,10 +1,10 @@
 package com.qdd.designmall.mallchat.po;
 
-import com.qdd.designmall.mbp.po.PageParam;
+import com.qdd.designmall.mbp.po.PagePo;
 import lombok.Data;
 
 @Data
 public class MmsPageMsgParam {
-    PageParam pageParam;
+    PagePo page;
     Long groupId;
 }

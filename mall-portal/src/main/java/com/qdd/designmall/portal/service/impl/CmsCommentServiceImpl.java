@@ -1,6 +1,7 @@
 package com.qdd.designmall.portal.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mbp.model.CmsProductComment;
 import com.qdd.designmall.mbp.model.PmsProduct;
 import com.qdd.designmall.mbp.model.UmsMember;
@@ -26,7 +27,7 @@ public class CmsCommentServiceImpl implements CmsCommentService {
     @Override
     public void create(CmsProductCommentCreateParam param) {
         CmsProductComment cmsProductComment = new CmsProductComment();
-        BeanUtils.copyProperties(param,cmsProductComment);
+        ZBeanUtils.copyProperties(param,cmsProductComment);
         // 获取对应的产品
         PmsProduct product = dbPmsProductService.getById(cmsProductComment.getProductId());
         if(product == null){
@@ -70,6 +71,6 @@ public class CmsCommentServiceImpl implements CmsCommentService {
         return dbCmsProductCommentService.lambdaQuery()
                 .eq(CmsProductComment::getProductId, param.getProductId())
                 .eq(CmsProductComment::getDeleteStatus, 0)
-                .page(param.getPageParam().iPage());
+                .page(param.getPagePo().iPage());
     }
 }

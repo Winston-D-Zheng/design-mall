@@ -37,6 +37,14 @@ services:
 #    ports:
 #      - "3306:3306"
 
+  # MongoDB 服务
+#  mongodb:
+#    image: mongo:latest
+#    volumes:
+#      - ./mongodb/data:/data/db
+#      - ./mongodb/config:/etc/mongod.conf
+#      - ./mongodb/init:/docker-entrypoint-initdb.d
+
   # Redis 服务
   #  redis:
   #    image: redis:latest

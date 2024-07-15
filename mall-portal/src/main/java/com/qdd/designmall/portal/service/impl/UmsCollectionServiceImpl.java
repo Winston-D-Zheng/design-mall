@@ -29,7 +29,7 @@ public class UmsCollectionServiceImpl implements UmsCollectionService {
                 .eq(UmsProductCollection::getMemberId, userId)
                 // 未删除
                 .eq(UmsProductCollection::getStatus, 1)
-                .page(param.getPageParam().iPage());
+                .page(param.getPagePo().iPage());
     }
 
     @Override

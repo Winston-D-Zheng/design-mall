@@ -28,6 +28,7 @@ public class OrderSnGenUtil {
         return PREFIX + timestamp + String.format("%04d", currentSequence);
     }
 
+
     public static void main(String[] args) {
         // 测试生成订单号
         for (int i = 0; i < 5; i++) {

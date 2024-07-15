@@ -1,6 +1,7 @@
 package com.qdd.designmall.mallhome.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mallhome.po.PromotionAddPo;
 import com.qdd.designmall.mallhome.po.PromotionPagePo;
 import com.qdd.designmall.mallhome.service.PromotionService;
@@ -22,7 +23,7 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public void add(PromotionAddPo param) {
         DbHmsPromotion entity = new DbHmsPromotion();
-        BeanUtils.copyProperties(param, entity);
+        ZBeanUtils.copyProperties(param, entity);
         pmsPromotionService.save(entity);
     }
 

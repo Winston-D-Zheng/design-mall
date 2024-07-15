@@ -1,6 +1,6 @@
 package com.qdd.designmall.mallpms.po;
 
-import com.qdd.designmall.mbp.po.PageParam;
+import com.qdd.designmall.mbp.po.PagePo;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -8,5 +8,5 @@ import lombok.Data;
 public class ProductSearchParam {
     @NotBlank(message = "关键字不能为空")
     private String keywords;
-    private PageParam pageParam;
+    private PagePo page;
 }

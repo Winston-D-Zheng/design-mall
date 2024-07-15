@@ -9,6 +9,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.qdd.designmall.common.serializer.PicUrlSerializer;
 import lombok.Data;
 
 /**
@@ -34,6 +37,7 @@ public class UmsMember implements Serializable {
 
     private LocalDateTime createTime;
 
+    @JsonSerialize(using = PicUrlSerializer.class)
     private String icon;
 
     private Integer gender;

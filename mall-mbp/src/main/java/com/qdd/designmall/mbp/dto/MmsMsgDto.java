@@ -6,11 +6,23 @@ import java.time.LocalDateTime;
 
 @Data
 public class MmsMsgDto {
-    Long userId;
-    Integer userType;
-    Long messageId;
-    LocalDateTime createTime;
-    Integer status;
-    String message;
-    Integer type;
+    private Long id;
+
+    private Long userId;
+
+    private Integer userType;
+
+    private Long groupUserId;
+
+    private LocalDateTime createTime;
+
+    private Integer status;
+
+    private String message;
+
+    private Integer type;
+
+    private String nickname;
+
+    private String avatar;
 }

@@ -2,6 +2,7 @@ package com.qdd.designmall.mbp.mapper;
 
 import com.qdd.designmall.mbp.model.DbOmsOrderItem;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
 * @author winston
@@ -11,6 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface DbOmsOrderItemMapper extends BaseMapper<DbOmsOrderItem> {
 
+    @Select("select order_id from db_oms_order_item where id = #{orderItemId}")
+    Long queryOrderId(Long orderItemId);
 }
 
 

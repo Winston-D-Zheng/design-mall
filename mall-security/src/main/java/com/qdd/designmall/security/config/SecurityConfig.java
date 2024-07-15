@@ -1,7 +1,7 @@
 package com.qdd.designmall.security.config;
 
 
-import com.qdd.designmall.security.filter.MyJwtFilter;
+import com.qdd.designmall.security.filter.ZJwtFilter;
 import com.qdd.designmall.security.handler.MyAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class SecurityConfig {
     String[] ignoreUrls;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, MyJwtFilter myJwtFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ZJwtFilter zJwtFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(myJwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(zJwtFilter, UsernamePasswordAuthenticationFilter.class)
                 // 异常处理
                 .exceptionHandling(e -> e.accessDeniedHandler(new MyAccessDeniedHandler()))
         ;
@@ -61,5 +61,4 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder());
         return authenticationManagerBuilder.build();
     }
-
 }

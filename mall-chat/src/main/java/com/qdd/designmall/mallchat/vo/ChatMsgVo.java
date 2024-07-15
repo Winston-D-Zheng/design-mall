@@ -1,18 +1,20 @@
 package com.qdd.designmall.mallchat.vo;
 
 
-import com.qdd.designmall.common.dto.UserDto;
-import com.qdd.designmall.mallchat.enums.EMsgType;
 import com.qdd.designmall.mallchat.enums.EMsgStatus;
+import com.qdd.designmall.mallchat.enums.EMsgType;
+import com.qdd.designmall.mallchat.po.MsgUserData;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 public class ChatMsgVo {
     Long messageId;
     EMsgType type;
-    Long senderId;
-    UserDto senderData;
+    MsgUserData senderData;
     EMsgStatus status;
     String  payload;
+    LocalDateTime createTime;
 }
 

@@ -2,6 +2,7 @@ package com.qdd.designmall.mallpms.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qdd.designmall.common.service.QiNiuYunService;
+import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mallpms.po.*;
 import com.qdd.designmall.mallpms.service.ProductService;
 import com.qdd.designmall.mallpms.vo.ProductDetailVo;
@@ -11,7 +12,6 @@ import com.qdd.designmall.mbp.model.SmsShop;
 import com.qdd.designmall.mbp.service.DbPmsProductService;
 import com.qdd.designmall.mbp.service.DbSmsShopService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -26,7 +26,6 @@ import java.util.stream.Stream;
  */
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class ProductServiceImpl implements ProductService {
     private final DbPmsProductService dbPmsProductService;
     private final DbSmsShopService dbSmsShopService;
@@ -38,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
         SmsShop shop = dbSmsShopService.notNullOneByOwnerId(adminId);
         // 保存商品
         PmsProduct pmsProduct = new PmsProduct();
-        BeanUtils.copyProperties(param, pmsProduct);
+        ZBeanUtils.copyProperties(param, pmsProduct);
         pmsProduct.setShopId(shop.getId());
 
         // 保存
@@ -60,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // 保存到数据库
-        BeanUtils.copyProperties(param, product);
+        ZBeanUtils.copyProperties(param, product);
 
         try {
             dbPmsProductService.updateById(product);
@@ -86,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
                 .eq(param.getDeleteStatus() != null, PmsProduct::getDeleteStatus, param.getDeleteStatus())
                 .eq(param.getPublishStatus() != null, PmsProduct::getPublishStatus, param.getPublishStatus())
                 .eq(param.getCategoryId() != null, PmsProduct::getCategoryId, param.getCategoryId())
-                .page(param.getPageParam().iPage());
+                .page(param.getPage().iPage());
     }
 
     @Override
@@ -112,13 +111,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductDetailVo detail(Long productId) {
         PmsProduct product = dbPmsProductService.getById(productId);
         ProductDetailVo detailVo = new ProductDetailVo();
-        BeanUtils.copyProperties(product, detailVo);
+        ZBeanUtils.copyProperties(product, detailVo);
         return detailVo;
     }
 
     @Override
     public IPage<PmsProduct> search(ProductSearchParam searchParam) {
-        return pmsProductMapper.queryByKeyWords(searchParam.getPageParam().iPage(),searchParam.getKeywords());
+        return pmsProductMapper.queryByKeyWords(searchParam.getPage().iPage(),searchParam.getKeywords());
     }
 
     @Override

@@ -17,29 +17,23 @@
         id,group_user_id,create_time,
         status,message,type
     </sql>
-    <select id="queryLastMsgByGroupId" resultType="com.qdd.designmall.mbp.model.MmsChatMessage">
-        select m.*
+    <select id="queryLastMsgByGroupId" resultType="com.qdd.designmall.mbp.dto.MmsMsgDto">
+        select m.*,
+               gu.user_id,
+               gu.user_type
         from mms_chat_message as m
-                 join mms_chat_group        as g    on g.id = #{groupId}
-                 join mms_chat_group_user   as gu   on gu.group_id = g.id
+                 join mms_chat_group_user as gu on gu.group_id = #{groupId}
         where m.group_user_id = gu.id
         order by m.create_time desc
         limit 1
     </select>
     <select id="queryPageMessage" resultType="com.qdd.designmall.mbp.dto.MmsMsgDto">
-        select gu.user_id,
-               gu.user_type,
-               m.id             as message_id,
-               m.create_time,
-               m.status,
-               m.message,
-               m.type
+        select m.*,
+               gu.user_id,
+               gu.user_type
         from mms_chat_message       as m
         join mms_chat_group_user    as gu
             on gu.group_id=#{groupId}
-                   and gu.user_id = #{userId}
-                   and gu.user_type = #{userType}
         where m.group_user_id = gu.id
-
     </select>
 </mapper>

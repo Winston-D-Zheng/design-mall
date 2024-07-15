@@ -1,6 +1,6 @@
 package com.qdd.designmall.admin.service;
 
-import com.qdd.designmall.admin.po.UmsAdminParam;
+import com.qdd.designmall.admin.po.UserRegisterPo;
 import com.qdd.designmall.mbp.model.UmsAdmin;
 import com.qdd.designmall.security.config.AdminUserDetails;
 import com.qdd.designmall.security.po.UserLoginParam;
@@ -12,7 +12,7 @@ import com.qdd.designmall.security.po.UserLoginParam;
  */
 public interface UmsAdminService{
 
-    void register(UmsAdminParam umsAdminParam);
+    void register(UserRegisterPo userRegisterPo);
 
     String login(UserLoginParam param);
 

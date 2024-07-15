@@ -2,9 +2,10 @@ spring:
   application:
     name: mall-portal
   profiles:
-    active: local
-  config:
-    import: classpath:qiniuyun.yaml
+    active: dev
+    include:
+      - ${spring.profiles.active}
+      - common
 server:
   port: 28080
 

@@ -4,9 +4,7 @@ import java.util.stream.Stream;
 
 public enum EUserType {
     ADMIN(0),
-    MEMBER(1),
-    WRITER(2),
-    SUPPORT(3);
+    MEMBER(1);
 
     private final Integer value;
 

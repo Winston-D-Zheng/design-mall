@@ -1,9 +1,9 @@
 package com.qdd.designmall.portal.po;
 
-import com.qdd.designmall.mbp.po.PageParam;
+import com.qdd.designmall.mbp.po.PagePo;
 import lombok.Data;
 
 @Data
 public class UmsProductCollectionPageParam {
-    PageParam pageParam;
+    PagePo pagePo;
 }

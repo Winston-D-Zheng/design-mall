@@ -6,11 +6,13 @@ import com.qdd.designmall.common.enums.EUserType;
 import com.qdd.designmall.mallchat.enums.EMsgType;
 import com.qdd.designmall.mallchat.po.MmsPageMsgParam;
 import com.qdd.designmall.mallchat.po.MmsSendMsgParam;
+import com.qdd.designmall.mallchat.po.MsgUserData;
 import com.qdd.designmall.mallchat.service.MmsService;
 import com.qdd.designmall.mallchat.vo.ChatMsgVo;
 import com.qdd.designmall.mallchat.vo.GroupMsgVo;
 import com.qdd.designmall.mbp.model.SmsShop;
-import com.qdd.designmall.mbp.po.PageParam;
+import com.qdd.designmall.mbp.model.UmsMember;
+import com.qdd.designmall.mbp.po.PagePo;
 import com.qdd.designmall.mbp.service.DbSmsShopService;
 import com.qdd.designmall.portal.service.UmsMemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,8 +35,7 @@ public class MmsChatController {
     @Operation(summary = "创建聊天")
     @GetMapping("/group/create")
     ResponseEntity<?> createGroup(@RequestParam Long shopId) {
-        Long userId = umsMemberService.currentUserId();
-        Long chatGroupId = mmsService.createChatGroup(shopId, new UserDto(EUserType.MEMBER, userId));
+        Long chatGroupId = mmsService.createChatGroup(shopId, getUserDto());
 
         // 将店长加入聊天组
         SmsShop shop = dbSmsShopService.notNullOne(shopId);
@@ -48,10 +49,10 @@ public class MmsChatController {
     @Operation(summary = "发送消息")
     @PostMapping("/msg/send")
     ResponseEntity<?> sendMsg(@RequestBody MmsSendMsgParam param) {
-        Long userId = umsMemberService.currentUserId();
+        UmsMember user = umsMemberService.currentUser();
 
         mmsService.sendMessage(param.getGroupId(),
-                new UserDto(EUserType.MEMBER, userId),
+                new MsgUserData(EUserType.MEMBER, user.getId(), user.getNickname(), user.getIcon()),
                 param.getPayload(),
                 EMsgType.of(param.getMsgType()));
 
@@ -61,9 +62,9 @@ public class MmsChatController {
 
     @Operation(summary = "获取聊天组列表(带最后一条信息)")
     @PostMapping("/group/page")
-    ResponseEntity<?> pageGroup(@RequestBody PageParam pageParam) {
-        Long userId = umsMemberService.currentUserId();
-        IPage<GroupMsgVo> r = mmsService.pageGroupWithLastMsg(pageParam, new UserDto(EUserType.MEMBER, userId));
+    ResponseEntity<?> pageGroup(@RequestBody PagePo pagePo) {
+
+        IPage<GroupMsgVo> r = mmsService.pageGroupWithLastMsg(pagePo, getUserDto());
         return ResponseEntity.ok(r);
     }
 
@@ -71,12 +72,16 @@ public class MmsChatController {
     @Operation(summary = "分页聊天消息")
     @PostMapping("/msg/page")
     ResponseEntity<?> pageMessage(@RequestBody MmsPageMsgParam param) {
-        Long userId = umsMemberService.currentUserId();
 
         IPage<ChatMsgVo> r = mmsService.pageMsg(
-                param.getPageParam(),
-                new UserDto(EUserType.MEMBER, userId),
+                param.getPage(),
+                getUserDto(),
                 param.getGroupId());
         return ResponseEntity.ok(r);
+    }
+
+    private UserDto getUserDto() {
+        Long userId = umsMemberService.currentUserId();
+        return new UserDto(EUserType.MEMBER, userId);
     }
 }

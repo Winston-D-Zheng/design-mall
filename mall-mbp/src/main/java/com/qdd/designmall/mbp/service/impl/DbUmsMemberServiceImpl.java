@@ -1,11 +1,9 @@
 package com.qdd.designmall.mbp.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.qdd.designmall.mbp.model.UmsAdmin;
 import com.qdd.designmall.mbp.model.UmsMember;
 import com.qdd.designmall.mbp.service.DbUmsMemberService;
-import com.qdd.designmall.mbp.mapper.UmsMemberMapper;
-import org.apache.commons.lang3.StringUtils;
+import com.qdd.designmall.mbp.mapper.DbUmsMemberMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,7 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2024-03-17 20:26:48
 */
 @Service
-public class DbUmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember>
+public class DbUmsMemberServiceImpl extends ServiceImpl<DbUmsMemberMapper, UmsMember>
     implements DbUmsMemberService {
 
     @Override

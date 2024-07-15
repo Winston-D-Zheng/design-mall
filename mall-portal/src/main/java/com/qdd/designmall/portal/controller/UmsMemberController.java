@@ -1,6 +1,7 @@
 package com.qdd.designmall.portal.controller;
 
 import com.qdd.designmall.mbp.model.UmsMember;
+import com.qdd.designmall.portal.po.MemberUpdatePo;
 import com.qdd.designmall.portal.po.UmsRegisterParam;
 import com.qdd.designmall.portal.service.UmsMemberService;
 import com.qdd.designmall.security.po.UserLoginParam;
@@ -32,9 +33,16 @@ public class UmsMemberController {
     }
 
     @Operation(summary = "获取会员信息")
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @GetMapping(value = "/info")
     public ResponseEntity<UmsMember> info() {
         UmsMember member = umsMemberService.userInfo();
         return ResponseEntity.ok(member);
+    }
+
+    @Operation(summary = "更新会员信息")
+    @PostMapping(value = "/update")
+    public ResponseEntity<?> update(@RequestBody MemberUpdatePo param){
+        umsMemberService.updateInfo(param);
+        return ResponseEntity.ok("success");
     }
 }

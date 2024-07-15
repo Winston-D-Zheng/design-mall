@@ -1,14 +1,15 @@
 package com.qdd.designmall.portal.service.impl;
 
+import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mbp.model.UmsMember;
 import com.qdd.designmall.mbp.service.DbUmsMemberService;
+import com.qdd.designmall.portal.po.MemberUpdatePo;
 import com.qdd.designmall.portal.po.UmsRegisterParam;
 import com.qdd.designmall.portal.service.UmsMemberService;
 import com.qdd.designmall.security.config.MemberUserDetails;
 import com.qdd.designmall.security.po.UserLoginParam;
 import com.qdd.designmall.security.service.SecurityUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +25,6 @@ public class UmsMemberServiceImpl implements UmsMemberService {
     private final SecurityUserService securityUserService;
 
 
-
     @Override
     public UmsMember register(UmsRegisterParam param) {
         //查询是否有相同用户名的用户
@@ -36,7 +36,7 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         }
 
         UmsMember umsMember = new UmsMember();
-        BeanUtils.copyProperties(param, umsMember);
+        ZBeanUtils.copyProperties(param, umsMember);
         umsMember.setCreateTime(LocalDateTime.now());
         umsMember.setStatus(1);
 
@@ -57,7 +57,7 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         UmsMember r = new UmsMember();
 
         UmsMember user = currentUser();
-        BeanUtils.copyProperties(user, r);
+        ZBeanUtils.copyProperties(user, r);
 
         r.setPassword("****");
         return r;
@@ -89,4 +89,10 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         return dbUmsMemberService.lambdaQuery().eq(UmsMember::getPhone, phone).exists();
     }
 
+    @Override
+    public void updateInfo(MemberUpdatePo param) {
+        UmsMember user = currentUser();
+        ZBeanUtils.copyProperties(param,user);
+        dbUmsMemberService.updateById(user);
+    }
 }

@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.qdd.designmall.common.serializer.PicUrlSerializer;
 import lombok.Data;
 
 /**
@@ -21,6 +24,7 @@ public class MmsChatGroup implements Serializable {
 
     private LocalDateTime createTime;
 
+    @JsonSerialize(using = PicUrlSerializer.class)
     private String avatar;
 
     private String name;

@@ -18,6 +18,10 @@
 
         <dependency>
             <groupId>com.qdd.designmall</groupId>
+            <artifactId>mall-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.qdd.designmall</groupId>
             <artifactId>mall-common</artifactId>
         </dependency>
         <dependency>

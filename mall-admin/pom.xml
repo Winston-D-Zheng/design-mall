@@ -16,6 +16,14 @@
     <dependencies>
         <dependency>
             <groupId>com.qdd.designmall</groupId>
+            <artifactId>shared-resources</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.qdd.designmall</groupId>
+            <artifactId>taobao-order</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.qdd.designmall</groupId>
             <artifactId>mall-chat</artifactId>
         </dependency>
         <dependency>

@@ -5,11 +5,12 @@ import com.qdd.designmall.admin.po.SmsAdminShopPagePram;
 import com.qdd.designmall.admin.po.SmsAdminShopCreateParam;
 import com.qdd.designmall.admin.po.SmsAdminShopUpdateParam;
 import com.qdd.designmall.admin.service.UmsAdminService;
+import com.qdd.designmall.admin.vo.ShopPageAllPo;
+import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mbp.model.SmsShop;
 import com.qdd.designmall.admin.service.SmsAdminShopService;
 import com.qdd.designmall.mbp.service.DbSmsShopService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class SmsAdminShopServiceImpl implements SmsAdminShopService {
     public Long create(SmsAdminShopCreateParam param) {
         SmsShop smsShop = new SmsShop();
 
-        BeanUtils.copyProperties(param, smsShop);
+        ZBeanUtils.copyProperties(param, smsShop);
 
         smsShop.setOwnerId(umsAdminService.currentUserId());
         smsShop.setCreateTime(LocalDateTime.now());
@@ -49,7 +50,7 @@ public class SmsAdminShopServiceImpl implements SmsAdminShopService {
         Long userId = umsAdminService.currentUserId();
         return dbSmsShopService.lambdaQuery()
                 .eq(SmsShop::getOwnerId, userId)
-                .page(smsShopParam.getPageParam().iPage());
+                .page(smsShopParam.getPage().iPage());
     }
 
     @Override
@@ -68,7 +69,7 @@ public class SmsAdminShopServiceImpl implements SmsAdminShopService {
         if (exists) {
             throw new RuntimeException("店铺名称已存在");
         }
-        BeanUtils.copyProperties(param, smsShop);
+        ZBeanUtils.copyProperties(param, smsShop);
         smsShop.setUpdateTime(LocalDateTime.now());
 
         try {
@@ -76,6 +77,14 @@ public class SmsAdminShopServiceImpl implements SmsAdminShopService {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @Override
+    public IPage<SmsShop> pageAll(ShopPageAllPo param) {
+        return dbSmsShopService
+                .lambdaQuery()
+                .like(param.getShopName() != null,SmsShop::getName,param.getShopName())
+                .page(param.getPage().iPage());
     }
 }
 

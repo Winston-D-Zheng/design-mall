@@ -13,8 +13,8 @@ import org.apache.ibatis.annotations.Param;
 * @Entity com.qdd.designmall.mbp.model.MmsChatMessage
 */
 public interface MmsChatMessageMapper extends BaseMapper<MmsChatMessage> {
-    MmsChatMessage queryLastMsgByGroupId(Long groupId);
-    IPage<MmsMsgDto> queryPageMessage(@Param("page") IPage<MmsMsgDto> page, Long groupId, Long userId, Integer userType);
+    MmsMsgDto queryLastMsgByGroupId(Long groupId);
+    IPage<MmsMsgDto> queryPageMessage(@Param("page") IPage<MmsMsgDto> page, Long groupId);
 }
 
 

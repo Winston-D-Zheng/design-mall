@@ -1,6 +1,7 @@
 package com.qdd.designmall.mallhome.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mallhome.po.PromotionShopAddPo;
 import com.qdd.designmall.mallhome.po.PromotionShopPagePo;
 import com.qdd.designmall.mallhome.service.PromotionShopService;
@@ -29,7 +30,7 @@ public class PromotionShopServiceImpl implements PromotionShopService {
 
         DbHmsPromotionShop entity = new DbHmsPromotionShop();
 
-        BeanUtils.copyProperties(param, entity);
+        ZBeanUtils.copyProperties(param, entity);
 
         entity.setName(shop.getName());
         entity.setPic(shop.getPic());

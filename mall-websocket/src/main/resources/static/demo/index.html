@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="message" placeholder="Enter message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <div>
+        <h2>Messages</h2>
+        <ul id="messages"></ul>
+    </div>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "@stomp/stompjs": "https://ga.jspm.io/npm:@stomp/stompjs@7.0.0/esm6/index.js"
+          }
+        }
+      </script>
+
+    <!-- ES Module Shims: Import maps polyfill for modules browsers without import maps support (all except Chrome 89+) -->
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.1/dist/es-module-shims.js"
+        crossorigin="anonymous"></script>
+
+    <script type="module">
+        import { Client } from '@stomp/stompjs';
+
+        const token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMDA3MDEwMiwiZXhwIjoxNzIwMTU2NTAyfQ.TRvqeel1r7NS6Q5kBt-mOwajCnLge0RvU3nq8h-YhZQ"
+        const client = new Client({
+            brokerURL: `ws://localhost:28080/ws?Authorization=${token}`,
+            debug: function (str) {
+                console.log(str);
+            },
+
+        });
+
+        client.onConnect = function (frame) {
+            fetch("http://localhost:28080/socketUsername", {
+                method: 'GET',
+                headers: {
+                    'Authorization': token, // 自定义请求头示例
+                    'Content-Type': 'application/json' // 可根据需要添加其他请求头
+                }
+            }).then(rest=>{
+                return rest.text()
+            })
+            .then(r=>{
+                client.subscribe(`/topic/${r}`,message => console.log(`Received: ${message.body}`));
+            })
+            .catch(err=>{
+                console.log(err)
+            })
+            // client.subscribe('/topic/test01', message =>
+            //     console.log(`Received: ${message.body}`)
+            // );
+        };
+
+        const callback = function (message) {
+            // called when the client receives a STOMP message from the server
+            if (message.body) {
+                alert('got message with body ' + message.body);
+            } else {
+                alert('got empty message');
+            }
+        };
+
+
+        client.watchForReceipt = function (frame) {
+            console.log(frame)
+        }
+
+        client.activate();
+    </script>
+</body>
+
+</html>

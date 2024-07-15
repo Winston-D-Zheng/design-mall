@@ -1,6 +1,7 @@
 package com.qdd.designmall.portal.service;
 
 import com.qdd.designmall.mbp.model.UmsMember;
+import com.qdd.designmall.portal.po.MemberUpdatePo;
 import com.qdd.designmall.portal.po.UmsRegisterParam;
 import com.qdd.designmall.security.config.MemberUserDetails;
 import com.qdd.designmall.security.po.UserLoginParam;
@@ -31,4 +32,6 @@ public interface UmsMemberService {
      * @return  存在返回true
      */
     public boolean hasRepeatPhone(String phone);
+
+    void updateInfo(MemberUpdatePo param);
 }

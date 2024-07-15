@@ -13,9 +13,6 @@ import java.math.BigDecimal;
 public class ProductDetailVo extends PmsProduct {
 
     @JsonIgnore
-    private Long id;
-
-    @JsonIgnore
     private Integer lowStock;
 
     @JsonIgnore

@@ -7,6 +7,8 @@ import com.qdd.designmall.mbp.mapper.MmsChatGroupUserMapper;
 import com.qdd.designmall.mbp.service.DbMmsChatGroupUserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author winston
  * @description 针对表【mms_chat_group_user】的数据库操作Service实现
@@ -37,6 +39,13 @@ public class DbMmsChatGroupUserServiceImpl extends ServiceImpl<MmsChatGroupUserM
             return one;
         }
         throw new RuntimeException("该用户type=" + EUserType.of(userType) + ",id=" + userId + "不在该群组中；或该群组id=" + groupId + "不存在");
+    }
+
+    @Override
+    public List<MmsChatGroupUser> listByGroupId(Long groupId) {
+         return lambdaQuery()
+                .eq(MmsChatGroupUser::getGroupId, groupId)
+                .list();
     }
 }
 

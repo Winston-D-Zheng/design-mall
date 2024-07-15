@@ -1,6 +1,6 @@
 package com.qdd.designmall.mallpms.po;
 
-import com.qdd.designmall.mbp.po.PageParam;
+import com.qdd.designmall.mbp.po.PagePo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.lang.Nullable;
@@ -20,5 +20,5 @@ public class ProductPageParam {
     @Nullable
     private Long categoryId;
 
-    PageParam pageParam;
+    PagePo page;
 }

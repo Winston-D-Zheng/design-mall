@@ -11,22 +11,15 @@ import lombok.Data;
 public class GroupMsgVo {
     GroupData data;
     Integer unread;
-    LastMessage lastMessage;
+    ChatMsgVo lastMessage;
+
 
     @Data
     public static class GroupData{
         @JsonSerialize(using = PicUrlSerializer.class)
         String avatar;
         String name;
-    }
-
-    @Data
-    public static class LastMessage{
-        Long timestamp;
-        EMsgStatus status;
-        EMsgType type;
-        Long senderId;
-        UserDto senderData;
-        String payload;
+        Long shopId;
+        Long groupId;
     }
 }

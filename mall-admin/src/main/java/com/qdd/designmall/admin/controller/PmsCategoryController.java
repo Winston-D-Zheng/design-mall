@@ -4,7 +4,6 @@ import com.qdd.designmall.mallpms.po.CategoryAddParam;
 import com.qdd.designmall.mallpms.po.CategoryUpdatePo;
 import com.qdd.designmall.mallpms.service.CategoryService;
 import com.qdd.designmall.mallpms.vo.CategoryAllVo;
-import com.qdd.designmall.mbp.model.DbPmsCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

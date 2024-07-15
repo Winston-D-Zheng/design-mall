@@ -1,6 +1,6 @@
 package com.qdd.designmall.malloms.po;
 
-import com.qdd.designmall.mbp.po.PageParam;
+import com.qdd.designmall.mbp.po.PagePo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.lang.Nullable;
@@ -35,5 +35,5 @@ public class OrderPageParam {
     @Nullable
     Long memberId;
 
-    PageParam pageParam;
+    PagePo page;
 }

@@ -1,0 +1,19 @@
+@startuml
+start
+:用户创建订单;
+repeat
+group 阶段1
+:设置订单当前阶段为1;
+:阶段1子订单创建;
+repeat :阶段1价格沟通;
+:阶段1子订单价格改价;
+:用户支付阶段1;
+repeat while (用户支付成功?)  is (no)
+->yes;
+:修改订单当前阶段为下一阶段;
+end group
+repeat while (阶段5完成) is (no)
+
+:设置订单状态为完成;
+end
+@enduml
