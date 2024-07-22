@@ -27,6 +27,4 @@ public class UserRegisterPo {
 
     @Parameter(name = "备注")
     private String note;
-
-    private String roles;
 }

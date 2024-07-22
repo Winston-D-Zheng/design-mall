@@ -23,4 +23,26 @@ public interface UmsAdminService{
 
     public Long currentUserId();
 
+
+    // ********** 身份变更 **********
+
+    /**
+     * 成为店长
+     * @param code  邀请码
+     */
+    void addMerchantRole(String code);
+
+
+    /**
+     * 成为客服
+     * @param code  邀请码
+     */
+    void addCustomerServiceRole(String code);
+
+
+    /**
+     * 成为写手
+     * @param code  邀请码
+     */
+    void addWriterRole(String code);
 }

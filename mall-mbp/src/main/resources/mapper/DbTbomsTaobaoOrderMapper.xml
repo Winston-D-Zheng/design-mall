@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.DbTbomsTaobaoOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.DbTbomsTaobaoOrder">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
+            <result property="shopName" column="shop_name" jdbcType="VARCHAR"/>
+            <result property="orderNo" column="order_no" jdbcType="VARCHAR"/>
+            <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+            <result property="buyerActualPaymentAmount" column="buyer_actual_payment_amount" jdbcType="DECIMAL"/>
+            <result property="refundTime" column="refund_time" jdbcType="TIMESTAMP"/>
+            <result property="refundAmount" column="refund_amount" jdbcType="DECIMAL"/>
+            <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+            <result property="merchantNotes" column="merchant_notes" jdbcType="VARCHAR"/>
+            <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+            <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+            <result property="updaterId" column="updater_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,shop_id,shop_name,
+        order_no,pay_time,buyer_actual_payment_amount,
+        refund_time,refund_amount,order_status,
+        merchant_notes,created_at,updated_at,
+        updater_id
+    </sql>
+</mapper>

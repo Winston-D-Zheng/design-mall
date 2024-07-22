@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ public class ProductController {
     @Operation(summary = "创建商品")
     @PostMapping("/create")
 //    @PreAuthorize("hasAnyAuthority('pms:produce:create')")
+    @PreAuthorize("hasRole(EAdminRole.MERCHANT.name())")
     public ResponseEntity<Long> create(@RequestBody ProductAddParam param) {
         Long id = productService.create(param, userId());
         return ResponseEntity.ok(id);

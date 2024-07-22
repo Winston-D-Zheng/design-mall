@@ -4,11 +4,14 @@ spring:
     port: 61613
     username: guest
     password: guest
+  profiles:
+    include: common
   config:
     import:
       - classpath:mbp-prod.yaml
       - classpath:security-prod.yaml
       - classpath:knife4j-prod.yaml
+      - classpath:external.yaml
 logging:
   level:
     com.baomidou.mybatisplus.mapper: DEBUG

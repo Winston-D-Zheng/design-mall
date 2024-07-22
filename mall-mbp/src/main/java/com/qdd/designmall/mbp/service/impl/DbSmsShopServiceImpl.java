@@ -34,6 +34,36 @@ public class DbSmsShopServiceImpl extends ServiceImpl<SmsShopMapper, SmsShop>
                 .oneOpt();
         return one.orElseThrow(() -> new RuntimeException("ownerId = "+ ownerId +"没有店铺"));
     }
+
+    @Override
+    public void notExistsThrow(Long shopId, Long ownerId) {
+        boolean exists = lambdaQuery()
+                .eq(SmsShop::getId, shopId)
+                .eq(SmsShop::getOwnerId, ownerId)
+                .exists();
+
+        if (!exists) {
+            throw new RuntimeException("店铺id=" + shopId + "不属于该用户");
+        }
+    }
+
+    @Override
+    public boolean exists(Long shopId, Long userId) {
+        return lambdaQuery()
+                .eq(SmsShop::getId, shopId)
+                .eq(SmsShop::getOwnerId, userId)
+                .exists();
+    }
+
+    @Override
+    public void notExistsThrow(Long shopId) {
+        boolean exists = lambdaQuery()
+                .eq(SmsShop::getId, shopId)
+                .exists();
+        if (!exists){
+            throw new RuntimeException("店铺不存在");
+        }
+    }
 }
 
 

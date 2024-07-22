@@ -13,4 +13,14 @@ public interface DbSmsShopService extends IService<SmsShop> {
 
     SmsShop notNullOneByOwnerId(Long ownerId);
 
+    /**
+     * 验证店铺是否属于用户
+     * @param shopId    店铺id
+     * @param ownerId   店长id
+     */
+    void notExistsThrow(Long shopId, Long ownerId);
+
+    boolean exists(Long shopId, Long userId);
+
+    void notExistsThrow(Long shopId);
 }

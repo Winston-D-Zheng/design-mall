@@ -14,6 +14,15 @@
     <description>mall-common</description>
 
     <dependencies>
+<!--        二维码-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+        </dependency>
 <!--        api文档-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>

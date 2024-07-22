@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>com.qdd.designmall</groupId>
-            <artifactId>taobao-order</artifactId>
+            <artifactId>tboms</artifactId>
         </dependency>
         <dependency>
             <groupId>com.qdd.designmall</groupId>
@@ -67,6 +67,10 @@
         <dependency>
             <groupId>com.qdd.designmall</groupId>
             <artifactId>mall-pms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
         </dependency>
     </dependencies>
 

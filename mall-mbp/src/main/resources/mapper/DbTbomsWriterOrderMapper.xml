@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.DbTbomsWriterOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.DbTbomsWriterOrder">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="taobaoOrderNo" column="taobao_order_no" jdbcType="VARCHAR"/>
+            <result property="taobaoOrderPrice" column="taobao_order_price" jdbcType="DECIMAL"/>
+            <result property="taobaoOrderState" column="taobao_order_state" jdbcType="TINYINT"/>
+            <result property="writerId" column="writer_id" jdbcType="BIGINT"/>
+            <result property="shouldPay" column="should_pay" jdbcType="DECIMAL"/>
+            <result property="payState" column="pay_state" jdbcType="TINYINT"/>
+            <result property="paymentOrderNo" column="payment_order_no" jdbcType="VARCHAR"/>
+            <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+            <result property="customerServiceId" column="customer_service_id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,taobao_order_no,taobao_order_price,
+        taobao_order_state,writer_id,should_pay,
+        pay_state,payment_order_no,pay_time,
+        is_delete,customer_service_id,create_time,
+        update_time
+    </sql>
+</mapper>

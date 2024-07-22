@@ -119,40 +119,109 @@ create table db_pms_category
         unique (name)
 );
 
-create table db_taobao_order
+create table db_qrcode_validation
 (
-    id                          bigint unsigned auto_increment
+    id          bigint unsigned auto_increment
         primary key,
-    shop_id                     bigint unsigned not null comment '店铺id(该系统的店铺id)',
-    shop_name                   varchar(255)    not null comment '店铺名称(淘宝店铺名)',
-    order_no                    varchar(255)    not null comment '订单编号',
-    pay_time                    datetime        null comment '订单付款时间',
-    buyer_actual_payment_amount decimal(10, 2)  null comment '买家实际支付金额',
-    refund_time                 datetime        null comment '退款时间',
-    refund_amount               decimal(10, 2)  null comment '退款金额',
-    order_status                varchar(255)    null comment '订单状态',
-    merchant_notes              varchar(255)    null comment '商家备注',
-    created_at                  datetime        not null,
-    updated_at                  datetime        not null,
-    updater_id                  bigint unsigned not null comment '更新人id'
+    content     varchar(255)         null,
+    scan_status tinyint(1) default 0 not null,
+    createAt    datetime             not null
 );
 
-create table db_taobao_order_and_writer
+create table db_shop_user_relation
+(
+    id        bigint unsigned auto_increment
+        primary key,
+    user_id   bigint unsigned not null,
+    shop_id   bigint unsigned not null,
+    relation  tinyint         not null comment '0:未定义 1:客服 2:写手',
+    create_at datetime        not null,
+    update_at datetime        not null
+);
+
+create table db_tboms_customer_service_order
+(
+    id                                   bigint unsigned auto_increment
+        primary key,
+    shop_id                              bigint unsigned             not null comment '系统店铺id',
+    integrated_order_id                  bigint unsigned             not null comment '综合订单id',
+    taobao_order_no                      varchar(255)   default ''   not null comment '淘宝订单编号',
+    taobao_order_state                   tinyint        default 0    not null comment '未结算/已结算',
+    has_corresponding_taobao_order_state tinyint        default 0    not null comment '子订单都有相应的淘宝订单',
+    order_price_amount                   decimal(10, 2) default 0.00 not null comment '客服录入订单金额',
+    taobao_order_price_amount            decimal(10, 2) default 0.00 not null comment '真实订单金额',
+    price_amount_right_state             tinyint        default 0    not null comment '订单金额正确',
+    updater_id                           bigint unsigned             not null comment '信息更新人id',
+    create_at                            datetime                    not null,
+    update_at                            datetime                    not null
+);
+
+create table db_tboms_integrated_order
+(
+    id                                   bigint unsigned auto_increment
+        primary key,
+    shop_id                              bigint unsigned              not null comment '系统店铺id',
+    taobao_order_no                      varchar(255)   default ''    not null comment '订单编号：第一个子订单的编号',
+    order_validated_state                tinyint        default 0     not null comment '所有子订单已验证',
+    taobao_order_state                   tinyint        default 0     not null comment '未结算/已结算',
+    updater_id                           bigint unsigned              not null comment '信息更新人id',
+    has_corresponding_taobao_order_state tinyint        default 0     not null comment '子订单都有相应的淘宝订单',
+    order_price_amount                   decimal(10, 2) default 0.00  not null comment '客服录入订单金额',
+    taobao_order_price_amount            decimal(10, 2) default 0.00  not null comment '真实订单金额',
+    price_amount_right_state             tinyint        default 0     not null comment '订单金额正确',
+    profile_margin                       decimal(4, 3)  default 0.700 not null comment '利润率',
+    should_pay_amount                    decimal(10, 2) default 0.00  not null comment '付给写手的总金额',
+    pay_amount_right_state               tinyint        default 0     not null comment '支付给写手的金额正确',
+    `lock`                               int            default 0     not null,
+    validation_version                   varchar(255)   default ''    not null comment '校验版本'
+);
+
+create table db_tboms_integrated_order_validation_history
+(
+    id                                   bigint unsigned auto_increment
+        primary key,
+    integrated_order_id                  bigint unsigned not null comment '综合订单id',
+    order_validated_state                tinyint         not null comment '验证通过状态：0: 未验证，-1: 未通过验证，1: 通过验证',
+    taobao_order_state                   tinyint         not null comment '淘宝订单状态： 0: 未成功， 1: 交易成功',
+    has_corresponding_taobao_order_state tinyint         not null comment '对应的客服订单是否都有对应的淘宝订单：0: 否， 1: 是',
+    price_amount_right_state             tinyint         not null comment '对应的客服订单是否所有的价格都是正确的：0: 否， 1: 是',
+    pay_amount_right_state               tinyint         not null comment '支付金额是否正确： 0: 否， 1: 是',
+    validation_at                        datetime        not null comment '验证时间'
+)
+    comment '综合订单校验历史';
+
+create table db_tboms_taobao_order
+(
+    id                                 bigint unsigned auto_increment
+        primary key,
+    shop_id                            bigint unsigned not null comment '店铺id(该系统的店铺id)',
+    taobao_shop_name                   varchar(255)    not null comment '店铺名称(淘宝店铺名)',
+    taobao_order_no                    varchar(255)    not null comment '订单编号',
+    taobao_pay_time                    datetime        not null comment '订单支付时间',
+    taobao_buyer_actual_payment_amount decimal(10, 2)  null comment '买家实际支付金额',
+    taobao_refund_time                 datetime        null comment '退款时间',
+    taobao_refund_amount               decimal(10, 2)  null comment '退款金额',
+    taobao_order_status                varchar(255)    null comment '结算状态：0-未结算，1-已结算',
+    taobao_merchant_notes              varchar(255)    null comment '商家备注',
+    created_at                         datetime        not null,
+    updated_at                         datetime        not null,
+    updater_id                         bigint unsigned not null comment '更新人id'
+);
+
+create table db_tboms_writer_order
 (
     id                  bigint unsigned auto_increment
         primary key,
-    taobao_order_no     varchar(255)                 not null comment '淘宝订单号',
-    taobao_order_price  decimal(10, 2)               not null comment '淘宝订单价格',
-    taobao_order_state  tinyint unsigned default '0' not null comment '淘宝订单状态',
+    shop_id             bigint unsigned              not null comment '系统店铺id',
+    integrated_order_id bigint unsigned              not null comment '综合订单id',
     writer_id           bigint unsigned              not null comment '写手id',
     should_pay          decimal(10, 2)               not null comment '应付金额',
-    pay_state           tinyint unsigned default '0' not null comment '支付状态',
+    pay_state           tinyint unsigned default '0' not null comment '支付状态: 0-待支付，1-已支付',
     payment_order_no    varchar(255)     default ''  not null comment '支付单号',
     pay_time            datetime                     not null comment '支付时间',
-    is_delete           tinyint unsigned default '0' not null comment '是否删除',
-    customer_service_id bigint unsigned              not null comment '客服id',
-    create_time         datetime                     not null comment '创建时间',
-    update_time         datetime                     not null comment '更新时间'
+    updater_id          bigint unsigned              not null comment '客服id',
+    create_at           datetime                     not null comment '创建时间',
+    update_at           datetime                     not null comment '更新时间'
 );
 
 create table db_ums_online

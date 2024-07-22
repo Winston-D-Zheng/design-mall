@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ public class ShopController {
 
     @PostMapping("/create")
     @Operation(summary = "创建店铺")
+    @PreAuthorize("hasRole(EAdminRole.MERCHANT.name())")
     ResponseEntity<Long> create(@RequestBody SmsAdminShopCreateParam param) {
         return ResponseEntity.ok(smsAdminShopService.create(param));
     }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.DbTbomsIntegratedOrderValidationHistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.DbTbomsIntegratedOrderValidationHistory">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="integratedOrderId" column="integrated_order_id" jdbcType="BIGINT"/>
+            <result property="orderValidatedState" column="order_validated_state" jdbcType="TINYINT"/>
+            <result property="taobaoOrderState" column="taobao_order_state" jdbcType="TINYINT"/>
+            <result property="hasCorrespondingTaobaoOrderState" column="has_corresponding_taobao_order_state" jdbcType="TINYINT"/>
+            <result property="priceAmountRightState" column="price_amount_right_state" jdbcType="TINYINT"/>
+            <result property="payAmountRightState" column="pay_amount_right_state" jdbcType="TINYINT"/>
+            <result property="validationAt" column="validation_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,integrated_order_id,order_validated_state,
+        taobao_order_state,has_corresponding_taobao_order_state,price_amount_right_state,
+        pay_amount_right_state,validation_at
+    </sql>
+</mapper>

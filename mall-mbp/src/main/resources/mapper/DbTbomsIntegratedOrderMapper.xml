@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.DbTbomsIntegratedOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.DbTbomsIntegratedOrder">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
+        <result property="taobaoOrderNo" column="taobao_order_no" jdbcType="VARCHAR"/>
+        <result property="orderValidatedState" column="order_validated_state" jdbcType="TINYINT"/>
+        <result property="taobaoOrderState" column="taobao_order_state" jdbcType="TINYINT"/>
+        <result property="updaterId" column="updater_id" jdbcType="BIGINT"/>
+        <result property="hasCorrespondingTaobaoOrderState" column="has_corresponding_taobao_order_state"
+                jdbcType="TINYINT"/>
+        <result property="orderPriceAmount" column="order_price_amount" jdbcType="DECIMAL"/>
+        <result property="taobaoOrderPriceAmount" column="taobao_order_price_amount" jdbcType="DECIMAL"/>
+        <result property="priceAmountRightState" column="price_amount_right_state" jdbcType="TINYINT"/>
+        <result property="profileMargin" column="profile_margin" jdbcType="DOUBLE"/>
+        <result property="payAmountRightState" column="pay_amount_right_state" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,sys_shop_id,taobao_order_no,
+        order_validated_state,taobao_order_state,updater_id,
+        has_corresponding_taobao_order_state,order_price_amount,taobao_order_price_amount,
+        price_amount_right_state,profile_margin,pay_amount_right_state
+    </sql>
+    <select id="queryByCondition" resultType="com.qdd.designmall.mbp.model.DbTbomsIntegratedOrder">
+        select io.*
+        from db_tboms_integrated_order as io
+        where io.shop_id = #{shopId}
+          and io.id in (select distinct co.integrated_order_id
+                        from db_tboms_customer_service_order as co
+                                 join db_tboms_taobao_order as tbo on tbo.shop_id = co.shop_id
+                            and tbo.taobao_order_no = co.taobao_order_no
+                            and tbo.taobao_pay_time between #{startTime} and #{endTime}
+                        where co.shop_id = #{shopId})
+    </select>
+</mapper>

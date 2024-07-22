@@ -29,7 +29,7 @@
         <module>mall-pms</module>
         <module>mall-websocket</module>
         <module>shared-resources</module>
-        <module>taobao-order</module>
+        <module>tboms</module>
     </modules>
 
     <properties>
@@ -39,9 +39,20 @@
 
     <dependencyManagement>
         <dependencies>
+<!--            二维码-->
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>3.5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>javase</artifactId>
+                <version>3.5.3</version>
+            </dependency>
             <dependency>
                 <groupId>com.qdd.designmall</groupId>
-                <artifactId>taobao-order</artifactId>
+                <artifactId>tboms</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>

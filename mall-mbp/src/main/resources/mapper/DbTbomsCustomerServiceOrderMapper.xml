@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qdd.designmall.mbp.mapper.DbTbomsCustomerServiceOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.qdd.designmall.mbp.model.DbTbomsCustomerServiceOrder">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
+            <result property="integratedOrderId" column="integrated_order_id" jdbcType="BIGINT"/>
+            <result property="taobaoOrderNo" column="taobao_order_no" jdbcType="VARCHAR"/>
+            <result property="taobaoOrderState" column="taobao_order_state" jdbcType="TINYINT"/>
+            <result property="hasCorrespondingTaobaoOrderState" column="has_corresponding_taobao_order_state" jdbcType="TINYINT"/>
+            <result property="orderPriceAmount" column="order_price_amount" jdbcType="DECIMAL"/>
+            <result property="taobaoOrderPriceAmount" column="taobao_order_price_amount" jdbcType="DECIMAL"/>
+            <result property="priceAmountRightState" column="price_amount_right_state" jdbcType="TINYINT"/>
+            <result property="updaterId" column="updater_id" jdbcType="BIGINT"/>
+            <result property="createAt" column="create_at" jdbcType="TIMESTAMP"/>
+            <result property="updateAt" column="update_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,shop_id,integrated_order_id,
+        taobao_order_no,taobao_order_state,has_corresponding_taobao_order_state,
+        order_price_amount,taobao_order_price_amount,price_amount_right_state,
+        updater_id,create_at,update_at
+    </sql>
+</mapper>
