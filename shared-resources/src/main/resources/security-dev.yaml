@@ -12,6 +12,7 @@ security:
     /druid/**,
     /admin/user/login,
     /admin/user/register,
+    /admin/user/getSmsCode,
     /member/login,
     /member/register
 jwt:

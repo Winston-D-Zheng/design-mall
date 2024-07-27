@@ -8,3 +8,17 @@ qiniuyun:
 weixin:
   secret: 98379ed4f00543ca7192db010fc1824e
   appid: wxb31794761234dfdd
+
+
+# ************** 短信服务 **************
+sms:
+  # 重新获取时间间隔： 60s
+  refetchInterval: 60
+  # 过期时间： 60s
+  expiration: 60
+
+tencent-sms:
+  secretId: xxx
+  secretKey: xxx
+  sdkAppId: xxx
+

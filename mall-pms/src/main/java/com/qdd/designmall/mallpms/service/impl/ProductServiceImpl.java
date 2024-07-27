@@ -1,7 +1,7 @@
 package com.qdd.designmall.mallpms.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.qdd.designmall.common.service.QiNiuYunService;
+import com.qdd.designmall.common.service.PicService;
 import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mallpms.po.*;
 import com.qdd.designmall.mallpms.service.ProductService;
@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 public class ProductServiceImpl implements ProductService {
     private final DbPmsProductService dbPmsProductService;
     private final DbSmsShopService dbSmsShopService;
-    private final QiNiuYunService qiNiuYunService;
+    private final PicService picService;
     private final PmsProductMapper pmsProductMapper;
 
     @Override
@@ -73,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
         Set<String> oldPics = Arrays.stream(product.getAlbumPics().split(",")).collect(Collectors.toSet());
         oldPics.add(product.getPic());
         oldPics.removeAll(newPics);
-        qiNiuYunService.asyncDelPic(oldPics);
+        picService.delPic(oldPics);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
         // 删除七牛云图片
         Set<String> pics = Stream.of(product.getAlbumPics().split(",")).collect(Collectors.toSet());
         pics.add(product.getPic());
-        qiNiuYunService.asyncDelPic(pics);
+        picService.delPic(pics);
         product.setDeleteStatus(1);
         dbPmsProductService.updateById(product);
     }

@@ -7,11 +7,14 @@ import com.qdd.designmall.admin.po.SmsAdminShopUpdateParam;
 import com.qdd.designmall.admin.service.UmsAdminService;
 import com.qdd.designmall.admin.vo.ShopPageAllPo;
 import com.qdd.designmall.common.util.ZBeanUtils;
+import com.qdd.designmall.mbp.model.DbShopUserRelation;
 import com.qdd.designmall.mbp.model.SmsShop;
 import com.qdd.designmall.admin.service.SmsAdminShopService;
+import com.qdd.designmall.mbp.service.DbShopUserRelationService;
 import com.qdd.designmall.mbp.service.DbSmsShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -21,20 +24,34 @@ import java.time.LocalDateTime;
 public class SmsAdminShopServiceImpl implements SmsAdminShopService {
     private final UmsAdminService umsAdminService;
     private final DbSmsShopService dbSmsShopService;
+    private final DbShopUserRelationService dbShopUserRelationService;
 
     @Override
+    @Transactional
     public Long create(SmsAdminShopCreateParam param) {
+        Long userId = umsAdminService.currentUserId();
+        LocalDateTime now = LocalDateTime.now();
+
         SmsShop smsShop = new SmsShop();
-
         ZBeanUtils.copyProperties(param, smsShop);
-
-        smsShop.setOwnerId(umsAdminService.currentUserId());
-        smsShop.setCreateTime(LocalDateTime.now());
-        smsShop.setUpdateTime(LocalDateTime.now());
+        smsShop.setOwnerId(userId);
+        smsShop.setCreateTime(now);
+        smsShop.setUpdateTime(now);
 
         try {
             dbSmsShopService.save(smsShop);
-            return smsShop.getId();
+            Long shopId = smsShop.getId();
+
+            // 将用户加入用户-商店关系表
+            DbShopUserRelation relation = new DbShopUserRelation();
+            relation.setShopId(shopId);
+            relation.setUserId(userId);
+            relation.setRelation(0);
+            relation.setCreateAt(now);
+            relation.setUpdateAt(now);
+            dbShopUserRelationService.save(relation);
+
+            return shopId;
         } catch (Exception e) {
             if (e.toString().contains("Duplicate")) {
                 throw new RuntimeException("该用户已拥有店铺，不可再次创建");

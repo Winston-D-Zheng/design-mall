@@ -1,17 +1,19 @@
 package com.qdd.designmall.tboms.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.qdd.designmall.mbp.model.DbShopUserRelation;
 import com.qdd.designmall.mbp.model.DbTbomsCustomerServiceOrder;
 import com.qdd.designmall.mbp.model.DbTbomsIntegratedOrder;
 import com.qdd.designmall.mbp.model.DbTbomsWriterOrder;
 import com.qdd.designmall.mbp.service.*;
 import com.qdd.designmall.security.service.SecurityUserService;
 import com.qdd.designmall.tboms.po.CustomerServiceOrderInputPo;
-import com.qdd.designmall.tboms.po.PageIgOrderPo;
-import com.qdd.designmall.tboms.service.OrderService;
 import com.qdd.designmall.tboms.po.PageCsOrderPo;
+import com.qdd.designmall.tboms.po.PageIgOrderPo;
 import com.qdd.designmall.tboms.po.PageWriterOrderPo;
+import com.qdd.designmall.tboms.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +50,11 @@ public class OrderServiceImpl implements OrderService {
         }
 
 
+        // 计算客服佣金
+        BigDecimal csCommissionRate = dbShopUserRelationService.getCsCommissionRate(shopId, userId);
+        BigDecimal csCommission = integratedOrderPriceAmount.multiply(csCommissionRate);
+
+
         // 计算应付写手工资
         BigDecimal integratedShouldPayAmount = BigDecimal.ZERO;
         for (var writer : param.getWriters()) {
@@ -62,7 +69,9 @@ public class OrderServiceImpl implements OrderService {
         integratedOrder.setTaobaoOrderNo(param.getTaobaoOrders().getFirst().getOrderNo());  // 订单编号
         integratedOrder.setOrderPriceAmount(integratedOrderPriceAmount);                    // 订单总价
         integratedOrder.setShouldPayAmount(integratedShouldPayAmount);                      // 应付写手工资总额
-        integratedOrder.setProfileMargin(param.getProfileMargin());                         // 利润率
+//        integratedOrder.setProfileMargin(param.getProfileMargin());                         // 利润率
+        integratedOrder.setCsCommission(csCommission);                                       // 客服佣金
+        integratedOrder.setCsCommissionRate(csCommissionRate);                               // 客服佣金率
         dbTbomsIntegratedOrderService.save(integratedOrder);
         Long integratedOrderId = integratedOrder.getId();       // 自动生成的id
 
@@ -89,6 +98,7 @@ public class OrderServiceImpl implements OrderService {
             entity.setUpdaterId(userId);
             entity.setIntegratedOrderId(integratedOrderId);
             entity.setWriterId(e.getWriterId());
+            entity.setOrderState(0);
             entity.setShouldPay(e.getShouldPay());
             entity.setCreateAt(LocalDateTime.now());
             entity.setUpdateAt(LocalDateTime.now());
@@ -99,12 +109,18 @@ public class OrderServiceImpl implements OrderService {
 
 
     /**
-     * 输入验证
+     * 输入验证，包括：
+     * <ol">
+     * <li>用户有权限添加订单</li>
+     * <li>订单和写手数量不为0</li>
+     * <li>写手在该店铺</li>
+     * <li>与已有的淘宝订单不重复</li>
+     * </ol>
      */
     private void inputValidate(CustomerServiceOrderInputPo param, Long currentUserId) {
-        // 验证客服属于该店铺
+        // 验证当前可以修改订单
         Long shopId = param.getShopId();
-        dbShopUserRelationService.notExistsThrow(shopId, currentUserId, 1);
+        ableToModifyOrder(currentUserId, shopId);
 
 
         // 验证订单数量 > 0
@@ -129,6 +145,22 @@ public class OrderServiceImpl implements OrderService {
             String orderNo = taobaoOrder.getOrderNo();
             dbTbomsCustomerServiceOrderService.existThrow(orderNo, shopId);
         }
+    }
+
+    /**
+     * 用户可以修改订单（是店长或客服）
+     *
+     * @param userId 用户id
+     * @param shopId 店铺id
+     */
+    private void ableToModifyOrder(Long userId, Long shopId) {
+        DbShopUserRelation entity = dbShopUserRelationService.getNullableOne(shopId, userId);
+        if (entity != null) {
+            Integer relation = entity.getRelation();
+            if (relation == 0 || relation == 1) return;     // 是店长或客服
+
+        }
+        throw new RuntimeException("当前用户无权修改订单");
     }
 
 
@@ -188,6 +220,36 @@ public class OrderServiceImpl implements OrderService {
             }
             default -> throw new RuntimeException("关系错误");
         }
+    }
+
+    @Override
+    public void updateIgOrderState(Long igOrderId, int orderState) {
+        var igOrder = dbTbomsIntegratedOrderService.getById(igOrderId);
+        if (igOrder == null) {
+            throw new RuntimeException("综合订单不存在");
+        }
+        updateIgOrderState(igOrder, orderState);
+    }
+
+    @Override
+    public void updateIgOrderState(@NonNull DbTbomsIntegratedOrder igOrder, int orderState) {
+        // 锁定状态无法修改
+        if (igOrder.getLock().equals(1)) {
+            throw new RuntimeException("订单已锁定，无法更新状态");
+        }
+
+        // 更新综合订单状态
+        igOrder.setOrderState(orderState);
+
+        // 更新相关写手订单状态
+        List<DbTbomsWriterOrder> writerOrders = dbTbomsWriterOrderService.lambdaQuery()
+                .eq(DbTbomsWriterOrder::getIntegratedOrderId, igOrder.getId())
+                .list();
+        writerOrders = writerOrders.stream().peek(e -> e.setOrderState(orderState)).toList();
+
+        // 更新到数据库
+        dbTbomsWriterOrderService.updateBatchById(writerOrders);
+        dbTbomsIntegratedOrderService.updateById(igOrder);
     }
 
     private Long getCurrentUserId() {

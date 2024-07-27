@@ -1,9 +1,11 @@
 package com.qdd.designmall.admin.controller;
 
 import com.qdd.designmall.admin.po.UserAddRolePo;
-import com.qdd.designmall.admin.po.UserRegisterPo;
+import com.qdd.designmall.admin.po.UserRegisterSmsPo;
 import com.qdd.designmall.admin.service.UmsAdminService;
+import com.qdd.designmall.admin.po.UserRegisterPo;
 import com.qdd.designmall.common.enums.EAdminRole;
+import com.qdd.designmall.mallexternal.service.SmsService;
 import com.qdd.designmall.mbp.model.UmsAdmin;
 import com.qdd.designmall.security.po.UserLoginParam;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,18 +16,45 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Tag(name = "后台用户管理")
+@Tag(name = "用户管理")
 @RequestMapping("/admin/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UmsAdminService umsAdminService;
+    private final SmsService smsService;
 
-    @PostMapping("/register")
-    @Operation(summary = "注册")
-    public ResponseEntity<String> register(@Validated @RequestBody UserRegisterPo param) {
-        umsAdminService.register(param);
+    @Operation(summary = "获取验证码")
+    @PostMapping("/sendSmsCode")
+    public ResponseEntity<String> sendSmsCode(@RequestBody UserRegisterSmsPo param) {
+        var phone = param.getPhone();
+        var type = param.getType();
+
+        // 验证用户表中是否被注册
+        umsAdminService.duplicateThrow(phone,type);
+
+        // 发送验证码
+        smsService.sendRegisterCode(phone, type);
         return ResponseEntity.ok("success");
     }
+
+
+    @Operation(summary = "注册")
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody UserRegisterPo param) {
+        var phone = param.getPhone();
+        var code = param.getSmsCode();
+        var password = param.getPassword();
+        var type = param.getType();
+
+        // 验证验证码可用性
+        smsService.validateRegisterCode(phone, code, type);
+
+        // 添加用户
+        umsAdminService.addUser(phone, password, type);
+
+        return ResponseEntity.ok("success");
+    }
+
 
     @PostMapping("/login")
     @Operation(summary = "登陆")

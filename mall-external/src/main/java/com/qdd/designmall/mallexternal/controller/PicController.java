@@ -1,6 +1,6 @@
 package com.qdd.designmall.common.controller;
 
-import com.qdd.designmall.common.service.QiNiuYunService;
+import com.qdd.designmall.common.service.PicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,26 +18,26 @@ import java.util.List;
 @RequestMapping("/pic")
 @RequiredArgsConstructor
 public class PicController {
-    private final QiNiuYunService qiNiuYunService;
+    private final PicService picService;
 
     @Operation(summary = "获取七牛云上传凭证")
     @GetMapping("/upToken")
     ResponseEntity<String> getUpToken() {
-        String upToken = qiNiuYunService.getUpToken();
+        String upToken = picService.getUpToken();
         return ResponseEntity.ok(upToken);
     }
 
     @Operation(summary = "图片下载连接")
     @GetMapping("/url")
     ResponseEntity<String> getUrl(@RequestParam String picName) {
-        String url = qiNiuYunService.getUrl(picName);
+        String url = picService.getUrl(picName);
         return ResponseEntity.ok(url);
     }
 
     @Operation(summary = "删除图片")
     @GetMapping("/del")
     ResponseEntity<String> del(@RequestParam List<String> picKeys) {
-        qiNiuYunService.delPic(new HashSet<>(picKeys));
+        picService.delPic(new HashSet<>(picKeys));
         return ResponseEntity.ok("success");
     }
 }

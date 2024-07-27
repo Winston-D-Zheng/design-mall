@@ -91,7 +91,6 @@ public class OrderValidateServiceImpl implements OrderValidateService {
         // 添加综合订单状态历史到数据库
         saveToHistory(unLockedIgOrders);
 
-        //TODO 更新写手订单到数据库
 
         return integratedOrders.stream().collect(Collectors.toMap(DbTbomsIntegratedOrder::getId, o -> Map.of(
                 "integratedOrder", o,
@@ -168,7 +167,7 @@ public class OrderValidateServiceImpl implements OrderValidateService {
             BigDecimal shouldPayAmount = writerOrders.stream().map(DbTbomsWriterOrder::getShouldPay).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 
-            // 支付金额正确： （订单金额-应付工资）/ 订单金额 == 利润率
+            // 支付金额正确： （订单金额-应付工资）/ 订单金额 >= 利润率
             boolean payAmountRightState =
                     orderPriceAmount.subtract(shouldPayAmount)
                             .divide(orderPriceAmount, 3, RoundingMode.HALF_UP)

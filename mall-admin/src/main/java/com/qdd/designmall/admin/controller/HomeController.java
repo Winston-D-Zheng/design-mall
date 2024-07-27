@@ -70,8 +70,6 @@ public class HomeController {
         return ResponseEntity.ok(r);
     }
 
-
-
     //*************** 店铺 ***************
 
     @PostMapping("/promotion/shop/add")

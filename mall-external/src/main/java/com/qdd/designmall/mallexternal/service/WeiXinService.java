@@ -1,4 +1,4 @@
-package com.qdd.designmall.common.service;
+package com.qdd.designmall.mallexternal.service;
 
 
 public interface WeiXinService {

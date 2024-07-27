@@ -30,6 +30,7 @@
         <module>mall-websocket</module>
         <module>shared-resources</module>
         <module>tboms</module>
+        <module>mall-external</module>
     </modules>
 
     <properties>
@@ -49,6 +50,12 @@
                 <groupId>com.google.zxing</groupId>
                 <artifactId>javase</artifactId>
                 <version>3.5.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.qdd.designmall</groupId>
+                <artifactId>mall-external</artifactId>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.qdd.designmall</groupId>

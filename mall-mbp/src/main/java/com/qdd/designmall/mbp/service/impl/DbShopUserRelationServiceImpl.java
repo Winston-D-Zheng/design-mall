@@ -6,6 +6,8 @@ import com.qdd.designmall.mbp.service.DbShopUserRelationService;
 import com.qdd.designmall.mbp.mapper.DbShopUserRelationMapper;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 /**
  * @author winston
  * @description 针对表【db_shop_user_relation】的数据库操作Service实现
@@ -46,6 +48,42 @@ public class DbShopUserRelationServiceImpl extends ServiceImpl<DbShopUserRelatio
         if (!exists) {
             throw new RuntimeException("该" + getRelationName(relation) + "未加入店铺");
         }
+    }
+
+    @Override
+    public boolean isMerchantOrCs(Long shopId, Long userId) {
+        return lambdaQuery()
+                .eq(DbShopUserRelation::getUserId, userId)
+                .eq(DbShopUserRelation::getShopId, shopId)
+                .and(wrapper -> wrapper
+                        .eq(DbShopUserRelation::getRelation, 0)     // 店长
+                        .or()
+                        .eq(DbShopUserRelation::getRelation, 1)     // 客服
+                )
+                .exists();
+    }
+
+    @Override
+    public DbShopUserRelation getNullableOne(Long shopId, Long userId) {
+        return lambdaQuery()
+                .eq(DbShopUserRelation::getUserId, userId)
+                .eq(DbShopUserRelation::getShopId, shopId)
+                .one();
+    }
+
+    @Override
+    public BigDecimal getCsCommissionRate(Long shopId, Long userId) {
+        DbShopUserRelation one = lambdaQuery()
+                .eq(DbShopUserRelation::getUserId, userId)
+                .eq(DbShopUserRelation::getShopId, shopId)
+                .select(DbShopUserRelation::getCsCommissionRate)
+                .one();
+
+        if (one == null) {
+            throw new RuntimeException("该用户非本店员工");
+        }
+
+        return one.getCsCommissionRate();
     }
 
     String getRelationName(int relation) {

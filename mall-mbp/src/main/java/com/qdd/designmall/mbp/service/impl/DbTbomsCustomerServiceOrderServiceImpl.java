@@ -26,7 +26,7 @@ public class DbTbomsCustomerServiceOrderServiceImpl extends ServiceImpl<DbTbomsC
                 .eq(DbTbomsCustomerServiceOrder::getShopId, shopId)
                 .exists();
         if (exists) {
-            throw new RuntimeException("订单重复");
+            throw new RuntimeException("淘宝订单重复");
         }
     }
 

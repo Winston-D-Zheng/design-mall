@@ -1,30 +1,28 @@
 package com.qdd.designmall.admin.po;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class UserRegisterPo {
-    @NotEmpty
-    @Parameter(name = "用户名", required = true)
-    private String username;
 
-    @NotEmpty
-    @Parameter(name = "密码", required = true)
+    @NotBlank
+    private String phone;
+
+    @NotBlank
     private String password;
 
-    @Parameter(name = "用户头像")
-    private String icon;
+    @NotBlank
+    private String smsCode;
 
-    @Email
-    @Parameter(name = "邮箱")
-    private String email;
-
-    @Parameter(name = "用户昵称")
-    private String nickName;
-
-    @Parameter(name = "备注")
-    private String note;
+    /**
+     * @see com.qdd.designmall.mbp.model.UmsAdmin#type
+     */
+    @Schema(description = "注册身份类型。0-员工，1-商家")
+    @Min(0)
+    @Max(1)
+    private int type;
 }

@@ -1,9 +1,9 @@
-package com.qdd.designmall.common.service.impl;
+package com.qdd.designmall.mallexternal.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qdd.designmall.common.config.WeixinProperties;
-import com.qdd.designmall.common.service.WeiXinService;
+import com.qdd.designmall.mallexternal.config.WeixinProperties;
+import com.qdd.designmall.mallexternal.service.WeiXinService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

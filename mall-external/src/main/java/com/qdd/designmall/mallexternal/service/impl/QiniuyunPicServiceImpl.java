@@ -1,7 +1,7 @@
-package com.qdd.designmall.common.service.impl;
+package com.qdd.designmall.mallexternal.service.impl;
 
-import com.qdd.designmall.common.config.QiniuyunProperties;
-import com.qdd.designmall.common.service.QiNiuYunService;
+import com.qdd.designmall.mallexternal.config.QiniuyunProperties;
+import com.qdd.designmall.common.service.PicService;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
@@ -11,20 +11,16 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.model.BatchStatus;
 import com.qiniu.util.Auth;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class QiNiuYunServiceImpl implements QiNiuYunService {
+public class QiniuyunPicServiceImpl implements PicService {
     private final QiniuyunProperties qiniuyunProperties;
 
     @Override
@@ -76,25 +72,5 @@ public class QiNiuYunServiceImpl implements QiNiuYunService {
         }
     }
 
-    @Override
-    public void asyncDelPic(Set<String> picNames) {
-        Thread.ofVirtual().name("delPic-" + picNames).start(() -> delPic(picNames));
-    }
 
-    @Override
-    public List<String> getUrls(String... keys) {
-        if (keys.length == 0) {
-            return new ArrayList<>();
-        }
-        return Arrays.stream(keys).map(this::getUrl).toList();
-    }
-
-    @Override
-    public String[] getUrls(String keys) {
-        if (StringUtils.isBlank(keys)) {
-            return new String[0];
-        }
-
-        return  Arrays.stream(keys.split(DELIMITER)).map(this::getUrl).toArray(String[]::new);
-    }
 }

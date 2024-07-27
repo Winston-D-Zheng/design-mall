@@ -1,7 +1,7 @@
 package com.qdd.designmall.admin.service.impl;
 
 import com.qdd.designmall.admin.service.InvitationService;
-import com.qdd.designmall.common.service.WeiXinService;
+import com.qdd.designmall.mallexternal.service.WeiXinService;
 import com.qdd.designmall.mbp.model.DbQrcodeValidation;
 import com.qdd.designmall.mbp.model.DbShopUserRelation;
 import com.qdd.designmall.mbp.service.DbQrcodeValidationService;

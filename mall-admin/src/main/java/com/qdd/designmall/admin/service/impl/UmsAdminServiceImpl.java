@@ -1,6 +1,6 @@
 package com.qdd.designmall.admin.service.impl;
 
-import com.qdd.designmall.admin.po.UserRegisterPo;
+import com.qdd.designmall.admin.po.UserRegisterSmsPo;
 import com.qdd.designmall.admin.service.UmsAdminService;
 import com.qdd.designmall.common.enums.EAdminRole;
 import com.qdd.designmall.common.util.ZBeanUtils;
@@ -14,9 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -27,27 +30,6 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityUserService securityUserService;
 
-
-    @Override
-    public void register(UserRegisterPo param) {
-        //查询是否有相同用户名的用户
-        boolean exists = dbUmsAdminService.lambdaQuery().eq(UmsAdmin::getUsername, param.getUsername()).exists();
-        if (exists) {
-            throw new RuntimeException("用户已存在");
-        }
-
-
-        //将密码进行加密操作
-        String encodePassword = passwordEncoder.encode(param.getPassword());
-
-
-        UmsAdmin umsAdmin = new UmsAdmin();
-        ZBeanUtils.copyProperties(param, umsAdmin);
-        umsAdmin.setCreateTime(LocalDate.now());
-        umsAdmin.setStatus(1);
-        umsAdmin.setPassword(encodePassword);
-        dbUmsAdminService.save(umsAdmin);
-    }
 
     @Override
     public String login(UserLoginParam param) {
@@ -110,6 +92,90 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
         // 添加身份权限
         addRole(EAdminRole.WRITER);
+    }
+
+
+    @Override
+    public void duplicateThrow(String identifier, int type) {
+        boolean exists = isExists(identifier, type);
+        if (exists) {
+            throw new RuntimeException("该用户名或手机已被注册");
+        }
+    }
+
+    @Override
+    public void addUser(String phone, String password, int type) {
+        String username = generateIdentifier(type, () -> {
+            // 生成随机用户名
+            return UUID.randomUUID().toString().replace("-", "").substring(10);
+        });
+
+        //将密码进行加密操作
+        String encodePassword = passwordEncoder.encode(password);
+
+        UmsAdmin entity = new UmsAdmin();
+        entity.setType(type);
+        entity.setUsername(username);
+        entity.setPassword(encodePassword);
+        entity.setPhone(phone);
+        // 根据用户类型添加默认权限和uuid
+        switch (type) {
+            case 0 -> {
+                entity.setRoles("WRITER");
+                entity.setUuid(generateIdentifier(type, () -> {
+                    // 生成随机员工uuid
+                    return UUID.randomUUID().toString().replace("-", "");
+                }));
+            }
+            case 1 -> {
+                entity.setRoles("MERCHANT");
+                entity.setUuid(generateIdentifier(type, () -> {
+                    // 生成随机商家uuid
+                    return UUID.randomUUID().toString().replace("-", "");
+                }));
+            }
+            default -> throw new RuntimeException("不合法的用户类型：" + type);
+        }
+        entity.setStatus(1);
+        entity.setCreateAt(LocalDateTime.now());
+        dbUmsAdminService.save(entity);
+    }
+
+
+
+    /**
+     * 判断 电话号/用户名/uuid 是否已被使用
+     *
+     * @param identifier 电话号/用户名
+     * @param type       {@link UmsAdmin#type}
+     */
+    private boolean isExists(String identifier, int type) {
+        return dbUmsAdminService.lambdaQuery()
+                .eq(UmsAdmin::getType, type)
+                .and(wrapper -> wrapper
+                        .eq(UmsAdmin::getUsername, identifier)
+                        .or()
+                        .eq(UmsAdmin::getPhone, identifier)
+                        .or()
+                        .eq(UmsAdmin::getUuid, identifier)
+                )
+                .exists();
+    }
+
+
+    /**
+     * 生成随机用户名，包含校验功能
+     *
+     * @param type {@link UmsAdmin#type}
+     */
+    private String generateIdentifier(int type, Supplier<String> identifierSupplier) {
+
+        while (true) {
+            String identifier = identifierSupplier.get();
+            if (!isExists(identifier, type)) {
+                return identifier;
+            }
+        }
     }
 
 

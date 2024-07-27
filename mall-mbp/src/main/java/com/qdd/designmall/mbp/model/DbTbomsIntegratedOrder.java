@@ -27,9 +27,9 @@ public class DbTbomsIntegratedOrder implements Serializable {
      * 1: 通过验证
      * <p>
      * 通过验证需要：
-     * 订单金额正确
+     * 客服订单金额正确
      * 利润率正确
-     * 订单状态正确（交易成功）
+     * 淘宝订单状态正确（交易成功）
      */
     private Integer orderValidatedState = 0;
 
@@ -52,9 +52,25 @@ public class DbTbomsIntegratedOrder implements Serializable {
      */
     private Integer hasCorrespondingTaobaoOrderState = 0;
 
+    /**
+     * 订单总额（根据写手录入金额生成）
+     */
     private BigDecimal orderPriceAmount;
 
+    /**
+     * 淘宝订单金额（校验时根据淘宝金额生成）
+     */
     private BigDecimal taobaoOrderPriceAmount;
+
+    /**
+     * @see com.qdd.designmall.mbp.model.DbShopUserRelation#csCommissionRate
+     */
+    private BigDecimal csCommissionRate;
+
+    /**
+     * 客服佣金（根据 {@link #csCommissionRate} 计算）)
+     */
+    private BigDecimal csCommission;
 
     /**
      * 对应的客服订单是否与淘宝订单价格都是正确的
@@ -81,11 +97,25 @@ public class DbTbomsIntegratedOrder implements Serializable {
     private Integer payAmountRightState = 0;
 
     /**
-     * 锁定状态，无法更新到数据库
-     * 0: 未锁定
-     * 1: 锁定
-     * 使用场景：
-     * 订单支付后，锁定状态
+     * 综合订单状态：
+     * <ul style="list-style-type: none;">
+     *     <li>0：写手未申请</li>
+     *     <li>1：写手已申请，客服未审批</li>
+     *     <li>2：写手已申请，客服审批失败</li>
+     *     <li>3：写手已申请，客服审批成功，成为可支付状态</li>
+     *     <li>4：所有写手订单已支付</li>
+     * </ul>
+     */
+    private Integer orderState = 0;
+
+
+    /**
+     * 锁定状态，无法更新到数据库：
+     * <ul style="list-style-type: none; padding-left: 0;">
+     *     <li>0: 未锁定</li>
+     *     <li>1: 锁定</li>
+     * </ul>
+     * <p>使用场景：订单支付后，锁定状态。</p>
      */
     private Integer lock = 0;
 

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Data;
@@ -24,12 +25,20 @@ public class DbShopUserRelation implements Serializable {
     private Long shopId;
 
     /**
-     * 用户与店铺的关系
-     * 0: 未定义
-     * 1: 客服
-     * 2: 写手
+     * 用户与店铺的关系:
+     * <ul style="list-style-type: none;">
+     *     <li>0: 店长</li>
+     *     <li>1: 客服</li>
+     *     <li>2: 写手</li>
+     * </ul>
      */
     private Integer relation;
+
+    /**
+     * 客服佣金比率
+     * 该字段只对客服有意义
+     */
+    private BigDecimal csCommissionRate;
 
     private LocalDateTime createAt;
 

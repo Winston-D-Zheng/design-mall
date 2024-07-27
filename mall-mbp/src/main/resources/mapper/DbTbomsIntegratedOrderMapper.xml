@@ -30,6 +30,7 @@
         select io.*
         from db_tboms_integrated_order as io
         where io.shop_id = #{shopId}
+          and io.order_state = 3
           and io.id in (select distinct co.integrated_order_id
                         from db_tboms_customer_service_order as co
                                  join db_tboms_taobao_order as tbo on tbo.shop_id = co.shop_id

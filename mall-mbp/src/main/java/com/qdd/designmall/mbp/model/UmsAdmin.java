@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 
-@TableName(value ="ums_admin")
+@TableName(value = "ums_admin")
 @Data
 public class UmsAdmin implements Serializable {
 
@@ -21,6 +21,10 @@ public class UmsAdmin implements Serializable {
 
     private String password;
 
+    private String phone;
+
+    private String uuid;
+
     private String icon;
 
     private String email;
@@ -29,14 +33,35 @@ public class UmsAdmin implements Serializable {
 
     private String note;
 
-    private LocalDate createTime;
+    private LocalDateTime createAt;
 
-    private LocalDate loginTime;
+    private LocalDateTime loginAt;
 
+    /**
+     * 身份类型：
+     * <ul style="list-style-type: none;">
+     *     <li>0-员工</li>
+     *     <li>1-商家</li>
+     * </ul>
+     */
+    private Integer type;
+
+    /**
+     * 用户可用状态：
+     * <ul style="list-style-type: none;">
+     *     <li>0-禁用</li>
+     *     <li>1-启用</li>
+     * </ul>
+     */
     private Integer status;
 
     /**
-     * MERCHANT：商家, WRITER：写手, CUSTOMER_SERVICE：客服
+     * 权限：
+     * <ul style="list-style-type: none;">
+     *     <li>MERCHANT：商家</li>
+     *     <li>WRITER：写手</li>
+     *     <li>CUSTOMER_SERVICE：客服</li>
+     * </ul>
      */
     private String roles;
 }
