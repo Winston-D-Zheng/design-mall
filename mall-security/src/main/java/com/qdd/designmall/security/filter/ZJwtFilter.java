@@ -38,11 +38,13 @@ public class ZJwtFilter extends OncePerRequestFilter {
                                     @Nullable HttpServletResponse response,
                                     @Nullable FilterChain filterChain) throws ServletException, IOException {
 
+        assert request != null;
         String uri = request.getRequestURI();
 
         // 跳过白名单
         AntPathMatcher pathMatcher = new AntPathMatcher();
         if (Arrays.stream(ignoreUrls).anyMatch(pattern -> pathMatcher.match(pattern, uri))) {
+            assert filterChain != null;
             filterChain.doFilter(request, response);
             return;
         }
@@ -50,6 +52,7 @@ public class ZJwtFilter extends OncePerRequestFilter {
         // 如果token为null或者验证失败，告诉前端
         String jwt = getJwtFromRequest(request);
         if (jwt == null || !tokenProvider.validateJwtToken(jwt)) {
+            assert response != null;
             failResponse(response, HttpStatus.UNAUTHORIZED, "Token验证失败，请重新登陆");
             return;
         }
@@ -61,6 +64,7 @@ public class ZJwtFilter extends OncePerRequestFilter {
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        assert filterChain != null;
         filterChain.doFilter(request, response);
     }
 

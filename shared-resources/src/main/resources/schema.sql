@@ -130,13 +130,27 @@ create table db_qrcode_validation
 
 create table db_shop_user_relation
 (
+    id                 bigint unsigned auto_increment
+        primary key,
+    user_id            bigint unsigned             not null,
+    shop_id            bigint unsigned             not null,
+    relation           tinyint                     not null comment '0:店长 1:客服 2:写手',
+    cs_commission_rate decimal(10, 2) default 0.00 not null comment '客服佣金比例，只对客服有效',
+    create_by          bigint unsigned             not null comment '创建人id',
+    create_at          datetime                    not null,
+    update_at          datetime                    not null
+);
+
+create table db_sms_phone_code
+(
     id        bigint unsigned auto_increment
         primary key,
-    user_id   bigint unsigned not null,
-    shop_id   bigint unsigned not null,
-    relation  tinyint         not null comment '0:未定义 1:客服 2:写手',
-    create_at datetime        not null,
-    update_at datetime        not null
+    phone     varchar(255)      not null,
+    code      varchar(255)      not null,
+    type      tinyint default 0 not null comment '用户类型',
+    status    tinyint default 0 not null comment '0- 未被使用， 1- 已被使用',
+    create_at datetime          not null,
+    update_at datetime          not null
 );
 
 create table db_tboms_customer_service_order
@@ -168,11 +182,14 @@ create table db_tboms_integrated_order
     has_corresponding_taobao_order_state tinyint        default 0     not null comment '子订单都有相应的淘宝订单',
     order_price_amount                   decimal(10, 2) default 0.00  not null comment '客服录入订单金额',
     taobao_order_price_amount            decimal(10, 2) default 0.00  not null comment '真实订单金额',
+    cs_commission_rate                   decimal(10, 2) default 0.00  not null comment '客服佣金比率',
+    cs_commission                        decimal(10, 2) default 0.00  not null comment '客服佣金',
     price_amount_right_state             tinyint        default 0     not null comment '订单金额正确',
     profile_margin                       decimal(4, 3)  default 0.700 not null comment '利润率',
     should_pay_amount                    decimal(10, 2) default 0.00  not null comment '付给写手的总金额',
     pay_amount_right_state               tinyint        default 0     not null comment '支付给写手的金额正确',
-    `lock`                               int            default 0     not null,
+    lock_status                          int            default 0     not null,
+    order_state                          tinyint        default 0     not null,
     validation_version                   varchar(255)   default ''    not null comment '校验版本'
 );
 
@@ -215,10 +232,11 @@ create table db_tboms_writer_order
     shop_id             bigint unsigned              not null comment '系统店铺id',
     integrated_order_id bigint unsigned              not null comment '综合订单id',
     writer_id           bigint unsigned              not null comment '写手id',
+    order_state         tinyint                      not null,
     should_pay          decimal(10, 2)               not null comment '应付金额',
     pay_state           tinyint unsigned default '0' not null comment '支付状态: 0-待支付，1-已支付',
     payment_order_no    varchar(255)     default ''  not null comment '支付单号',
-    pay_time            datetime                     not null comment '支付时间',
+    pay_time            datetime                     null comment '支付时间',
     updater_id          bigint unsigned              not null comment '客服id',
     create_at           datetime                     not null comment '创建时间',
     update_at           datetime                     not null comment '更新时间'
@@ -333,18 +351,21 @@ create table sms_shop
 
 create table ums_admin
 (
-    id          bigint auto_increment
+    id        bigint auto_increment
         primary key,
-    username    varchar(64)             null,
-    password    varchar(64)             null,
-    icon        varchar(500)            null comment '头像',
-    email       varchar(100)            null comment '邮箱',
-    nick_name   varchar(200)            null comment '昵称',
-    note        varchar(500)            null comment '备注信息',
-    create_time datetime                null comment '创建时间',
-    login_time  datetime                null comment '最后登录时间',
-    status      int          default 1  null comment '帐号启用状态：0->禁用；1->启用',
-    roles       varchar(200) default '' not null comment 'MERCHANT：商家, WRITER：写手, CUSTOMER_SERVICE：客服'
+    username  varchar(64)             null,
+    password  varchar(64)             null,
+    uuid      varchar(255)            not null,
+    phone     varchar(255)            not null,
+    icon      varchar(500)            null comment '头像',
+    email     varchar(100)            null comment '邮箱',
+    nick_name varchar(200)            null comment '昵称',
+    note      varchar(500)            null comment '备注信息',
+    create_at datetime                null comment '创建时间',
+    login_at  datetime                null comment '最后登录时间',
+    status    int          default 1  null comment '帐号启用状态：0->禁用；1->启用',
+    type      tinyint      default 0  not null comment '0-员工，1->商家',
+    roles     varchar(200) default '' not null comment 'MERCHANT：商家, WRITER：写手, CUSTOMER_SERVICE：客服'
 )
     comment '后台用户表' charset = utf8mb3
                          row_format = DYNAMIC;

@@ -1,148 +1,64 @@
 package com.qdd.designmall.mallexternal.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qdd.designmall.mallexternal.config.SmsProperties;
 import com.qdd.designmall.mallexternal.config.TencentSmsProperties;
 import com.qdd.designmall.mallexternal.service.SendSmsService;
-import jakarta.xml.bind.DatatypeConverter;
+import com.tencentcloudapi.common.AbstractModel;
+import com.tencentcloudapi.common.Credential;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
+import com.tencentcloudapi.sms.v20210111.SmsClient;
+import com.tencentcloudapi.sms.v20210111.models.SendSmsRequest;
+import com.tencentcloudapi.sms.v20210111.models.SendSmsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.TimeZone;
-
-import static javax.crypto.Cipher.SECRET_KEY;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TencentSendSmsServiceImpl implements SendSmsService {
+    private final SmsProperties smsProperties;
     private final TencentSmsProperties tencentSmsProperties;
-    private final ObjectMapper mapper;
-    private static final Charset charset = StandardCharsets.UTF_8;
 
 
     @Override
     public void sentToPhone(String content, String... phones) {
+        String SecretId = tencentSmsProperties.getSecretId();
+        String SecretKey = tencentSmsProperties.getSecretKey();
 
-        // 实现腾讯短信服务功能
-        String SECRET_ID = tencentSmsProperties.getSecretId();
-        String secretKey = tencentSmsProperties.getSecretKey();
-        String CT_JSON = "application/json; charset=utf-8";
-
-        String service = "sms";
-        String host = "sms.tencentcloudapi.com";
-        String region = "ap-guangzhou";
-        String action = "SendSms";
-        String version = "2021-01-11";
-        String algorithm = "TC3-HMAC-SHA256";
-        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        // 注意时区，否则容易出错
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String date = sdf.format(new Date(Long.parseLong(timestamp + "000")));
-
-        // ************* 步骤 1：拼接规范请求串 *************
-        String httpRequestMethod = "POST";
-        String canonicalUri = "/";
-        String canonicalQueryString = "";
-        String canonicalHeaders = "content-type:application/json; charset=utf-8\n" + "host:" + host + "\n";
-        String signedHeaders = "content-type;host";
-
-        HashMap<String, Object> params = new HashMap<>();
-        // 实际调用需要更新参数，这里仅作为演示签名验证通过的例子
-        params.put("SmsSdkAppId", "1400006666");
-        params.put("SignName", "腾讯云");
-        params.put("TemplateId", "1234");
-        params.put("TemplateParamSet", new String[]{"12345"});
-        params.put("PhoneNumberSet", phones);
-        params.put("SessionContext", "test");
-        String payload = null;
         try {
-            payload = mapper.writeValueAsString(params);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            // 实例化一个认证对象，入参需要传入腾讯云账户 SecretId 和 SecretKey，此处还需注意密钥对的保密
+            // 代码泄露可能会导致 SecretId 和 SecretKey 泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考，建议采用更安全的方式来使用密钥，请参见：https://cloud.tencent.com/document/product/1278/85305
+            // 密钥可前往官网控制台 https://console.cloud.tencent.com/cam/capi 进行获取
+            Credential cred = new Credential(SecretId, SecretKey);
+            // 实例化一个http选项，可选的，没有特殊需求可以跳过
+            HttpProfile httpProfile = new HttpProfile();
+            httpProfile.setEndpoint("sms.tencentcloudapi.com");
+            // 实例化一个client选项，可选的，没有特殊需求可以跳过
+            ClientProfile clientProfile = new ClientProfile();
+            clientProfile.setHttpProfile(httpProfile);
+            // 实例化要请求产品的client对象,clientProfile是可选的
+            SmsClient client = new SmsClient(cred, "ap-beijing", clientProfile);
+            // 实例化一个请求对象,每个接口都会对应一个request对象
+            SendSmsRequest req = new SendSmsRequest();
+            req.setPhoneNumberSet(phones);
+
+            req.setSmsSdkAppId("1400927373");
+            req.setTemplateId("2228976");
+            req.setSignName("万帮科技门户网站");
+
+            String[] templateParamSet1 = {content, String.valueOf((smsProperties.getExpiration() / 60))};
+            req.setTemplateParamSet(templateParamSet1);
+
+            // 返回的resp是一个SendSmsResponse的实例，与请求对象对应
+            SendSmsResponse resp = client.SendSms(req);
+            // 输出json格式的字符串回包
+            log.info("发送短信成功，回显信息为{}", AbstractModel.toJsonString(resp));
+        } catch (TencentCloudSDKException e) {
+            log.error("发送短信失败，错误信息为{}", e.toString());
+            throw new RuntimeException("发送短信失败，错误信息为" + e.toString());
         }
-
-        // String payload = "{\"Limit\": 1, \"Filters\": [{\"Values\": [\"\\u672a\\u547d\\u540d\"], \"Name\": \"instance-name\"}]}";
-        String hashedRequestPayload = sha256Hex(payload);
-        String canonicalRequest = httpRequestMethod + "\n" + canonicalUri + "\n" + canonicalQueryString + "\n"
-                + canonicalHeaders + "\n" + signedHeaders + "\n" + hashedRequestPayload;
-        System.out.println(canonicalRequest);
-
-        // ************* 步骤 2：拼接待签名字符串 *************
-        String credentialScope = date + "/" + service + "/" + "tc3_request";
-        String hashedCanonicalRequest = sha256Hex(canonicalRequest);
-        String stringToSign = algorithm + "\n" + timestamp + "\n" + credentialScope + "\n" + hashedCanonicalRequest;
-        System.out.println(stringToSign);
-
-        // ************* 步骤 3：计算签名 *************
-        byte[] secretDate = hmac256(("TC3" + SECRET_KEY).getBytes(charset), date);
-        byte[] secretService = hmac256(secretDate, service);
-        byte[] secretSigning = hmac256(secretService, "tc3_request");
-        String signature = DatatypeConverter.printHexBinary(hmac256(secretSigning, stringToSign)).toLowerCase();
-        System.out.println(signature);
-
-        // ************* 步骤 4：拼接 Authorization *************
-        String authorization = algorithm + " " + "Credential=" + SECRET_ID + "/" + credentialScope + ", "
-                + "SignedHeaders=" + signedHeaders + ", " + "Signature=" + signature;
-        System.out.println(authorization);
-
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", authorization);
-        headers.put("Content-Type", CT_JSON);
-        headers.put("Host", host);
-        headers.put("X-TC-Action", action);
-        headers.put("X-TC-Timestamp", timestamp);
-        headers.put("X-TC-Version", version);
-        headers.put("X-TC-Region", region);
-
-        RestClient client = RestClient.create("https://" + host);
-        String body = client.post()
-                .headers(httpHeaders ->
-                        headers.forEach(httpHeaders::add)
-                )
-                .body(payload)
-                .retrieve()
-                .body(String.class);
-        log.warn(body);
-    }
-
-    public static byte[] hmac256(byte[] key, String msg) {
-        Mac mac = null;
-        try {
-            mac = Mac.getInstance("HmacSHA256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, mac.getAlgorithm());
-        try {
-            mac.init(secretKeySpec);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
-        }
-        return mac.doFinal(msg.getBytes(charset));
-    }
-
-    public static String sha256Hex(String s){
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] d = md.digest(s.getBytes(charset));
-        return DatatypeConverter.printHexBinary(d).toLowerCase();
     }
 }

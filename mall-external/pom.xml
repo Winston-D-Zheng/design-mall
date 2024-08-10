@@ -23,6 +23,11 @@
             <groupId>com.qdd.designmall</groupId>
             <artifactId>mall-mbp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java-sms</artifactId>
+        </dependency>
+
     </dependencies>
 
 

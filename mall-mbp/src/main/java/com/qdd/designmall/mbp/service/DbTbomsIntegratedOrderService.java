@@ -18,5 +18,5 @@ public interface DbTbomsIntegratedOrderService extends IService<DbTbomsIntegrate
      * 获取综合订单的店铺id，如果不存在抛出异常
      * @param igOrderId 综合订单ID
      */
-    Long getNotNullShopIdById(Long igOrderId);
+    Long getNonNullShopIdById(Long igOrderId);
 }

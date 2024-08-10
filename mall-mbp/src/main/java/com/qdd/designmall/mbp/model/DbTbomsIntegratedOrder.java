@@ -1,5 +1,6 @@
 package com.qdd.designmall.mbp.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
@@ -117,7 +118,7 @@ public class DbTbomsIntegratedOrder implements Serializable {
      * </ul>
      * <p>使用场景：订单支付后，锁定状态。</p>
      */
-    private Integer lock = 0;
+    private Integer lockStatus = 0;
 
     /**
      * 校验版本号

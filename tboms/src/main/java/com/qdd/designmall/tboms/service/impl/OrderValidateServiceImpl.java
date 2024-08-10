@@ -83,7 +83,7 @@ public class OrderValidateServiceImpl implements OrderValidateService {
 
         // 更新综合订单到数据库（只保存未锁定订单）
         List<DbTbomsIntegratedOrder> unLockedIgOrders = integratedOrders.stream()
-                .filter(e -> e.getLock().equals(0))                                 // 筛选未锁定订单
+                .filter(e -> e.getLockStatus().equals(0))                                 // 筛选未锁定订单
                 .peek(e -> e.setValidationVersion(UUID.randomUUID().toString()))    // 生成新的校验版本
                 .toList();
         dbTbomsIntegratedOrderService.updateBatchById(unLockedIgOrders);

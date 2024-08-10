@@ -7,7 +7,7 @@ import com.qdd.designmall.mbp.model.DbTbomsIntegratedOrder;
 import com.qdd.designmall.mbp.model.DbTbomsWriterOrder;
 import com.qdd.designmall.mbp.service.*;
 import com.qdd.designmall.security.service.SecurityUserService;
-import com.qdd.designmall.tboms.po.CustomerServiceOrderInputPo;
+import com.qdd.designmall.tboms.po.CsOrderInputPo;
 import com.qdd.designmall.tboms.po.PageCsOrderPo;
 import com.qdd.designmall.tboms.po.PageIgOrderPo;
 import com.qdd.designmall.tboms.po.PageWriterOrderPo;
@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void input(CustomerServiceOrderInputPo param) {
+    public void input(CsOrderInputPo param) {
         Long shopId = param.getShopId();
         Long userId = getCurrentUserId();
 
@@ -69,7 +69,6 @@ public class OrderServiceImpl implements OrderService {
         integratedOrder.setTaobaoOrderNo(param.getTaobaoOrders().getFirst().getOrderNo());  // 订单编号
         integratedOrder.setOrderPriceAmount(integratedOrderPriceAmount);                    // 订单总价
         integratedOrder.setShouldPayAmount(integratedShouldPayAmount);                      // 应付写手工资总额
-//        integratedOrder.setProfileMargin(param.getProfileMargin());                         // 利润率
         integratedOrder.setCsCommission(csCommission);                                       // 客服佣金
         integratedOrder.setCsCommissionRate(csCommissionRate);                               // 客服佣金率
         dbTbomsIntegratedOrderService.save(integratedOrder);
@@ -111,16 +110,15 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 输入验证，包括：
      * <ol">
-     * <li>用户有权限添加订单</li>
      * <li>订单和写手数量不为0</li>
      * <li>写手在该店铺</li>
      * <li>与已有的淘宝订单不重复</li>
      * </ol>
      */
-    private void inputValidate(CustomerServiceOrderInputPo param, Long currentUserId) {
-        // 验证当前可以修改订单
+    private void inputValidate(CsOrderInputPo param, Long currentUserId) {
         Long shopId = param.getShopId();
-        ableToModifyOrder(currentUserId, shopId);
+        // 验证当前可以修改订单
+//        ableToModifyOrder(currentUserId, shopId);
 
 
         // 验证订单数量 > 0
@@ -134,16 +132,20 @@ public class OrderServiceImpl implements OrderService {
 
 
         // 验证写手在该店铺
-        for (var writer : param.getWriters()) {
-            Long writerId = writer.getWriterId();
-            dbShopUserRelationService.notExistsThrow(shopId, writerId, 2);
+        List<Long> writerIdsInShop = dbShopUserRelationService.writerIdsInShop(shopId);
+        boolean allInShop = param.getWriters().stream()
+                .map(CsOrderInputPo.Writer::getWriterId)
+                .allMatch(writerIdsInShop::contains);
+        if (!allInShop) {
+            throw new RuntimeException("存在写手不在该店铺");
         }
 
 
         // 验证订单没有重复
-        for (var taobaoOrder : param.getTaobaoOrders()) {
-            String orderNo = taobaoOrder.getOrderNo();
-            dbTbomsCustomerServiceOrderService.existThrow(orderNo, shopId);
+        List<String> taobaoOrderNos = param.getTaobaoOrders().stream().map(CsOrderInputPo.TaobaoOrder::getOrderNo).toList();
+        List<String> DuplicateTaobaoOrderNos = dbTbomsCustomerServiceOrderService.taobaoOrderNoInUse(shopId, taobaoOrderNos);
+        if (!DuplicateTaobaoOrderNos.isEmpty()) {
+            throw new RuntimeException("淘宝订单已被其他客服订单使用：" + String.join("\n", DuplicateTaobaoOrderNos));
         }
     }
 
@@ -186,7 +188,7 @@ public class OrderServiceImpl implements OrderService {
     public IPage<DbTbomsCustomerServiceOrder> pageCsOrder(PageCsOrderPo param, int relation) {
         Long userId = getCurrentUserId();
         Long igOrderId = param.getIgOrderId();
-        Long shopId = dbTbomsIntegratedOrderService.getNotNullShopIdById(igOrderId);
+        Long shopId = dbTbomsIntegratedOrderService.getNonNullShopIdById(igOrderId);
         switch (relation) {
             case 0 -> {
                 // 是店长，返回所有订单
@@ -206,7 +208,7 @@ public class OrderServiceImpl implements OrderService {
     public IPage<DbTbomsWriterOrder> pageWriterOrder(PageWriterOrderPo param, int relation) {
         Long userId = getCurrentUserId();
         Long igOrderId = param.getIgOrderId();
-        Long shopId = dbTbomsIntegratedOrderService.getNotNullShopIdById(igOrderId);
+        Long shopId = dbTbomsIntegratedOrderService.getNonNullShopIdById(igOrderId);
         switch (relation) {
             case 0 -> {
                 // 是店长，返回所有订单
@@ -234,7 +236,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void updateIgOrderState(@NonNull DbTbomsIntegratedOrder igOrder, int orderState) {
         // 锁定状态无法修改
-        if (igOrder.getLock().equals(1)) {
+        if (igOrder.getLockStatus().equals(1)) {
             throw new RuntimeException("订单已锁定，无法更新状态");
         }
 

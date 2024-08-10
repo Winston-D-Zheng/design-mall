@@ -4,7 +4,7 @@ import com.qdd.designmall.mbp.model.UmsMember;
 import com.qdd.designmall.portal.po.MemberUpdatePo;
 import com.qdd.designmall.portal.po.UmsRegisterParam;
 import com.qdd.designmall.portal.service.UmsMemberService;
-import com.qdd.designmall.security.po.UserLoginParam;
+import com.qdd.designmall.security.po.MemberLoginParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class UmsMemberController {
 
     @Operation(summary = "会员登陆")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginParam param) {
+    public ResponseEntity<String> login(@RequestBody MemberLoginParam param) {
         String  token = umsMemberService.login(param);
         return ResponseEntity.ok(token);
     }

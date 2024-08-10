@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -24,9 +26,21 @@ public class AdminUserDetailService implements UserDetailsService {
     private final UmsPermissionMapper umsPermissionMapper;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String identifierWithType) throws UsernameNotFoundException {
+        // 校验用户是否存在
+        String regex = "^(.+)@([01])$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(identifierWithType);
 
-        UmsAdmin user = dbUmsAdminService.notNullOne(username);
+        if (!matcher.matches()) {
+            throw new RuntimeException("格式不正确");
+        }
+
+        String identifier = matcher.group(1);
+        int type = Integer.parseInt(matcher.group(2));
+
+
+        UmsAdmin user = dbUmsAdminService.notNullOne(identifier, type);
         List<UmsPermission> permissions = umsPermissionMapper.queryByAdminId(user.getId());
 
         return new AdminUserDetails(user, permissions);

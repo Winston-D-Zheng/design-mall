@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,11 @@ public class SmsServiceImpl implements SmsService {
 
         // 生成新的验证码，更新/保存到数据库
         String code = generateCode();
+
+        // 发送短信
+        sendSmsService.sentToPhone(code, phone);
+
+        // 验证码保存到数据库
         if (oneOpt.isPresent()) {
             DbSmsPhoneCode one = oneOpt.get();
             one.setCode(code);
@@ -57,8 +63,6 @@ public class SmsServiceImpl implements SmsService {
             one.setUpdateAt(now);
             dbSmsPhoneCodeService.save(one);
         }
-
-        sendSmsService.sentToPhone("注册验证码为：" + code + "，请在1分钟内使用。", phone);
     }
 
     @Override
@@ -87,9 +91,10 @@ public class SmsServiceImpl implements SmsService {
         throw new RuntimeException("验证码错误");
     }
 
-    //TODO 生成信息验证码
+    // 生成信息验证码
     String generateCode() {
-        return "test";
+        Random random = new Random();
+        return String.format("%04d", random.nextInt(9999));
     }
 
 }

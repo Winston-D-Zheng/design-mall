@@ -66,6 +66,4 @@ public class MerchantController {
 
         return ResponseEntity.ok(rt);
     }
-
-    //TODO 可结算订单下载
 }

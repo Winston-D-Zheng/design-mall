@@ -7,7 +7,7 @@ import com.qdd.designmall.portal.po.MemberUpdatePo;
 import com.qdd.designmall.portal.po.UmsRegisterParam;
 import com.qdd.designmall.portal.service.UmsMemberService;
 import com.qdd.designmall.security.config.MemberUserDetails;
-import com.qdd.designmall.security.po.UserLoginParam;
+import com.qdd.designmall.security.po.MemberLoginParam;
 import com.qdd.designmall.security.service.SecurityUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -48,7 +48,7 @@ public class UmsMemberServiceImpl implements UmsMemberService {
     }
 
     @Override
-    public String login(UserLoginParam param) {
+    public String login(MemberLoginParam param) {
         return securityUserService.login(param);
     }
 

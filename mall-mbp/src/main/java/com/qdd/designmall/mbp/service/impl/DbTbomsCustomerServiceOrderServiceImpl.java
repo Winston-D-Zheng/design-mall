@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qdd.designmall.mbp.model.DbTbomsCustomerServiceOrder;
 import com.qdd.designmall.mbp.service.DbTbomsCustomerServiceOrderService;
 import com.qdd.designmall.mbp.mapper.DbTbomsCustomerServiceOrderMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,6 +54,30 @@ public class DbTbomsCustomerServiceOrderServiceImpl extends ServiceImpl<DbTbomsC
                 .page(page);
     }
 
+    @Override
+    public List<String> taobaoOrderNoInUse(Long shopId, @NonNull List<String> taobaoOrderNos) {
+        if (taobaoOrderNos.isEmpty()) {
+            return List.of();
+        }
+        return lambdaQuery()
+                .in(DbTbomsCustomerServiceOrder::getTaobaoOrderNo, List.of(taobaoOrderNos))
+                .select(DbTbomsCustomerServiceOrder::getTaobaoOrderNo)
+                .list()
+                .stream()
+                .map(DbTbomsCustomerServiceOrder::getTaobaoOrderNo)
+                .toList();
+    }
+
+    @Override
+    public boolean isTaobaoInUse(Long shopId, String taobaoOrderNo) {
+        if (taobaoOrderNo == null) {
+            return false;
+        }
+        return lambdaQuery()
+                .eq(DbTbomsCustomerServiceOrder::getTaobaoOrderNo, taobaoOrderNo)
+                .eq(DbTbomsCustomerServiceOrder::getShopId, shopId)
+                .exists();
+    }
 }
 
 

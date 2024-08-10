@@ -43,7 +43,7 @@ public class AdminUserDetails implements ZUserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getPhone() + "@" + user.getType();
     }
 
     @Override

@@ -26,7 +26,7 @@ public class ShopController {
 
     @PostMapping("/create")
     @Operation(summary = "创建店铺")
-    @PreAuthorize("hasRole(EAdminRole.MERCHANT.name())")
+    @PreAuthorize("hasRole(T(com.qdd.designmall.common.enums.EAdminRole).MERCHANT.name())")
     ResponseEntity<Long> create(@RequestBody SmsAdminShopCreateParam param) {
         return ResponseEntity.ok(smsAdminShopService.create(param));
     }

@@ -14,11 +14,10 @@ weixin:
 sms:
   # 重新获取时间间隔： 60s
   refetchInterval: 60
-  # 过期时间： 60s
-  expiration: 60
+  # 过期时间： 120s
+  expiration: 120
 
 tencent-sms:
-  secretId: xxx
-  secretKey: xxx
-  sdkAppId: xxx
+  secretId: AKID2vc5Pq9KjHnDXgjkfWJyRhjYCeUIzd9Z
+  secretKey: b2FOLySnzINPSRIKH6pfNxIQbv64pOlv
 

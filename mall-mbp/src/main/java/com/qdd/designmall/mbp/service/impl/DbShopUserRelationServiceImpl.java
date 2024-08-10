@@ -7,6 +7,7 @@ import com.qdd.designmall.mbp.mapper.DbShopUserRelationMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author winston
@@ -84,6 +85,27 @@ public class DbShopUserRelationServiceImpl extends ServiceImpl<DbShopUserRelatio
         }
 
         return one.getCsCommissionRate();
+    }
+
+    @Override
+    public boolean isWriter(Long shopId, Long userId) {
+        return lambdaQuery()
+                .eq(DbShopUserRelation::getShopId, shopId)
+                .eq(DbShopUserRelation::getUserId, userId)
+                .eq(DbShopUserRelation::getRelation, 2)
+                .exists();
+    }
+
+    @Override
+    public List<Long> writerIdsInShop(Long shopId) {
+        return lambdaQuery()
+                .eq(DbShopUserRelation::getShopId, shopId)
+                .eq(DbShopUserRelation::getRelation, 2)
+                .select(DbShopUserRelation::getUserId)
+                .list()
+                .stream()
+                .map(DbShopUserRelation::getUserId)
+                .toList();
     }
 
     String getRelationName(int relation) {

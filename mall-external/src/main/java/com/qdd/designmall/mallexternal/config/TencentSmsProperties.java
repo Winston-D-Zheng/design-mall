@@ -8,5 +8,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class TencentSmsProperties {
     private String secretId;
     private String secretKey;
-    private String sdkAppId;
 }

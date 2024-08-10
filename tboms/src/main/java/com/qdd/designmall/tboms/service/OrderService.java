@@ -4,20 +4,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qdd.designmall.mbp.model.DbTbomsCustomerServiceOrder;
 import com.qdd.designmall.mbp.model.DbTbomsIntegratedOrder;
 import com.qdd.designmall.mbp.model.DbTbomsWriterOrder;
-import com.qdd.designmall.tboms.po.CustomerServiceOrderInputPo;
+import com.qdd.designmall.tboms.po.CsOrderInputPo;
 import com.qdd.designmall.tboms.po.PageIgOrderPo;
 import com.qdd.designmall.tboms.po.PageCsOrderPo;
 import com.qdd.designmall.tboms.po.PageWriterOrderPo;
 import org.springframework.lang.NonNull;
-
-import java.math.BigDecimal;
 
 public interface OrderService {
 
     /**
      * 订单输入
      */
-    void input(CustomerServiceOrderInputPo param);
+    void input(CsOrderInputPo param);
 
     /**
      * 分页综合订单

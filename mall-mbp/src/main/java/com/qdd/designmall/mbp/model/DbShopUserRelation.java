@@ -44,6 +44,9 @@ public class DbShopUserRelation implements Serializable {
 
     private LocalDateTime updateAt;
 
+    /**
+     * 创建人id
+     */
     private Long createBy;
 
     @Serial

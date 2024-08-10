@@ -4,13 +4,13 @@ import com.qdd.designmall.mbp.model.UmsMember;
 import com.qdd.designmall.portal.po.MemberUpdatePo;
 import com.qdd.designmall.portal.po.UmsRegisterParam;
 import com.qdd.designmall.security.config.MemberUserDetails;
-import com.qdd.designmall.security.po.UserLoginParam;
+import com.qdd.designmall.security.po.MemberLoginParam;
 
 public interface UmsMemberService {
 
     UmsMember register(UmsRegisterParam param);
 
-    String login(UserLoginParam param);
+    String login(MemberLoginParam param);
 
     UmsMember userInfo();
 

@@ -1,13 +1,13 @@
 package com.qdd.designmall.admin.service.impl;
 
-import com.qdd.designmall.admin.po.UserRegisterSmsPo;
 import com.qdd.designmall.admin.service.UmsAdminService;
 import com.qdd.designmall.common.enums.EAdminRole;
 import com.qdd.designmall.common.util.ZBeanUtils;
 import com.qdd.designmall.mbp.model.UmsAdmin;
 import com.qdd.designmall.mbp.service.DbUmsAdminService;
 import com.qdd.designmall.security.config.AdminUserDetails;
-import com.qdd.designmall.security.po.UserLoginParam;
+import com.qdd.designmall.security.po.AdminLoginParam;
+import com.qdd.designmall.security.po.MemberLoginParam;
 import com.qdd.designmall.security.service.SecurityUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Service
@@ -32,7 +31,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
 
     @Override
-    public String login(UserLoginParam param) {
+    public String login(AdminLoginParam param) {
+
         return securityUserService.login(param);
     }
 

@@ -24,7 +24,7 @@ public class DbTbomsIntegratedOrderServiceImpl extends ServiceImpl<DbTbomsIntegr
     }
 
     @Override
-    public Long getNotNullShopIdById(Long igOrderId) {
+    public Long getNonNullShopIdById(Long igOrderId) {
         DbTbomsIntegratedOrder integratedOrder = lambdaQuery().eq(DbTbomsIntegratedOrder::getId, igOrderId).select(DbTbomsIntegratedOrder::getShopId).one();
         if (integratedOrder == null) {
             throw new RuntimeException("订单id=" + igOrderId + "不存在");

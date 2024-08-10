@@ -7,7 +7,7 @@ import com.qdd.designmall.admin.po.UserRegisterPo;
 import com.qdd.designmall.common.enums.EAdminRole;
 import com.qdd.designmall.mallexternal.service.SmsService;
 import com.qdd.designmall.mbp.model.UmsAdmin;
-import com.qdd.designmall.security.po.UserLoginParam;
+import com.qdd.designmall.security.po.AdminLoginParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class UserController {
         var type = param.getType();
 
         // 验证用户表中是否被注册
-        umsAdminService.duplicateThrow(phone,type);
+        umsAdminService.duplicateThrow(phone, type);
 
         // 发送验证码
         smsService.sendRegisterCode(phone, type);
@@ -58,7 +58,8 @@ public class UserController {
 
     @PostMapping("/login")
     @Operation(summary = "登陆")
-    public ResponseEntity<?> login(@Validated @RequestBody UserLoginParam param) {
+    public ResponseEntity<?> login(@Validated @RequestBody AdminLoginParam param) {
+        param.setIdentifier(param.getIdentifier().strip());     // 去掉首尾空格
         String token = umsAdminService.login(param);
         return ResponseEntity.ok(token);
     }
