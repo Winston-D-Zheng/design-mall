@@ -1,13 +1,13 @@
 qiniuyun:
   domin: cdn.wanbangzhu.com
-  accessKey: Of40fh4rOQEYIO3XpWxdgopmzVmMhmd5diXyAjur
-  secretKey: PqGP-RvhgyLmm3rKsqeORIvtsATv3mhb4anxGkeH
+  accessKey: xxx
+  secretKey: xxx
   bucket: design-mall
 
 
 weixin:
-  secret: 98379ed4f00543ca7192db010fc1824e
-  appid: wxb31794761234dfdd
+  secret: xxx
+  appid: xxx
 
 
 # ************** 短信服务 **************
@@ -18,6 +18,6 @@ sms:
   expiration: 120
 
 tencent-sms:
-  secretId: AKID2vc5Pq9KjHnDXgjkfWJyRhjYCeUIzd9Z
-  secretKey: b2FOLySnzINPSRIKH6pfNxIQbv64pOlv
+  secretId: xxx
+  secretKey: xxx
 
